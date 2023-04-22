@@ -32,11 +32,11 @@ export class InMemoryUserRepository {
   }
 }
 
-export class InMemoryEmailAlreadyExistsRepository {
+export class InMemoryGetUserByEmailRepository {
   private users: User[] = users;
-  async emailAlreadyExists(email: string): Promise<boolean> {
+  async getUserByEmail(email: string): Promise<User | undefined> {
     const user = this.users.find((user) => user.email === email);
-    return user !== undefined;
+    return user;
   }
 }
 

@@ -1,7 +1,7 @@
 import { User } from "../models/User";
 import { CreateUserController } from "../controllers/users/create-user/create-user";
 import {
-  InMemoryEmailAlreadyExistsRepository,
+  InMemoryGetUserByEmailRepository,
   InMemoryUserRepository,
 } from "./repositories/in-memory";
 
@@ -23,11 +23,11 @@ const userWithoutFirstName = {
 describe("Create user", () => {
   it("should create a user", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryEmailAlreadyExistsRepository =
-      new InMemoryEmailAlreadyExistsRepository();
+    const inMemoryGetUserByEmailRepository =
+      new InMemoryGetUserByEmailRepository();
     const createUserController = new CreateUserController(
       inMemoryUserRepository,
-      inMemoryEmailAlreadyExistsRepository
+      inMemoryGetUserByEmailRepository
     );
 
     const { body, statusCode } = await createUserController.handle({
@@ -45,11 +45,11 @@ describe("Create user", () => {
 
   it("shoul not be able create user because not exists a body", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryEmailAlreadyExistsRepository =
-      new InMemoryEmailAlreadyExistsRepository();
+    const inMemoryGetUserByEmailRepository =
+      new InMemoryGetUserByEmailRepository();
     const createUserController = new CreateUserController(
       inMemoryUserRepository,
-      inMemoryEmailAlreadyExistsRepository
+      inMemoryGetUserByEmailRepository
     );
 
     const { body, statusCode } = await createUserController.handle({});
@@ -60,11 +60,11 @@ describe("Create user", () => {
 
   it("should not be able to create a user because firstName is missing", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryEmailAlreadyExistsRepository =
-      new InMemoryEmailAlreadyExistsRepository();
+    const inMemoryGetUserByEmailRepository =
+      new InMemoryGetUserByEmailRepository();
     const createUserController = new CreateUserController(
       inMemoryUserRepository,
-      inMemoryEmailAlreadyExistsRepository
+      inMemoryGetUserByEmailRepository
     );
 
     const { body, statusCode } = await createUserController.handle({
@@ -77,11 +77,11 @@ describe("Create user", () => {
 
   it("should not be able to create a user because firstName is empty", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryEmailAlreadyExistsRepository =
-      new InMemoryEmailAlreadyExistsRepository();
+    const inMemoryGetUserByEmailRepository =
+      new InMemoryGetUserByEmailRepository();
     const createUserController = new CreateUserController(
       inMemoryUserRepository,
-      inMemoryEmailAlreadyExistsRepository
+      inMemoryGetUserByEmailRepository
     );
 
     const { body, statusCode } = await createUserController.handle({
@@ -94,11 +94,11 @@ describe("Create user", () => {
 
   it("should not be able to create a user because email is invalid", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryEmailAlreadyExistsRepository =
-      new InMemoryEmailAlreadyExistsRepository();
+    const inMemoryGetUserByEmailRepository =
+      new InMemoryGetUserByEmailRepository();
     const createUserController = new CreateUserController(
       inMemoryUserRepository,
-      inMemoryEmailAlreadyExistsRepository
+      inMemoryGetUserByEmailRepository
     );
 
     const { body, statusCode } = await createUserController.handle({
@@ -111,11 +111,11 @@ describe("Create user", () => {
 
   it("should not be able to create a user because email already exists", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryEmailAlreadyExistsRepository =
-      new InMemoryEmailAlreadyExistsRepository();
+    const inMemoryGetUserByEmailRepository =
+      new InMemoryGetUserByEmailRepository();
     const createUserController = new CreateUserController(
       inMemoryUserRepository,
-      inMemoryEmailAlreadyExistsRepository
+      inMemoryGetUserByEmailRepository
     );
 
     await createUserController.handle({
@@ -132,11 +132,11 @@ describe("Create user", () => {
 
   it("should return 500 if something goes wrong", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryEmailAlreadyExistsRepository =
-      new InMemoryEmailAlreadyExistsRepository();
+    const inMemoryGetUserByEmailRepository =
+      new InMemoryGetUserByEmailRepository();
     const createUserController = new CreateUserController(
       inMemoryUserRepository,
-      inMemoryEmailAlreadyExistsRepository
+      inMemoryGetUserByEmailRepository
     );
 
     jest
