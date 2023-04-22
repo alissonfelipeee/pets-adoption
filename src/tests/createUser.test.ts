@@ -1,4 +1,4 @@
-import { User } from "../models/user";
+import { User } from "../models/User";
 import { CreateUserController } from "./../controllers/create-user/create-user";
 import {
   InMemoryEmailAlreadyExistsRepository,

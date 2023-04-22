@@ -1,4 +1,4 @@
-import { User } from "../models/user";
+import { User } from "../models/User";
 import { UpdateUserController } from "./../controllers/update-user/update-user";
 import { InMemoryUserRepository } from "./repositories/in-memory";
 

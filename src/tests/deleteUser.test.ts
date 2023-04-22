@@ -1,6 +1,9 @@
-import { User } from "../models/user";
+import { User } from "../models/User";
 import { DeleteUserController } from "./../controllers/delete-user/delete-user";
-import { InMemoryGetUserByIdRepository, InMemoryUserRepository } from "./repositories/in-memory";
+import {
+  InMemoryGetUserByIdRepository,
+  InMemoryUserRepository,
+} from "./repositories/in-memory";
 
 const userExample = {
   id: 1,

@@ -1,4 +1,4 @@
-import { User } from "../../models/user";
+import { User } from "../../models/User";
 import { HttpRequest, HttpResponse, IController } from "../protocols";
 import { IDeleteUserRepository } from "./protocols";
 import { IGetUserByIdRepository } from "../../services/get-user-by-id/protocols";

@@ -1,5 +1,5 @@
 import validator from "validator";
-import { User } from "../../models/user";
+import { User } from "../../models/User";
 import { HttpRequest, HttpResponse, IController } from "../protocols";
 import { CreateUserParams, ICreateUserRepository } from "./protocols";
 import { generateHash } from "../../utils/bcrypt";

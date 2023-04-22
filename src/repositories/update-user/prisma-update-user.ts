@@ -3,7 +3,7 @@ import {
   UpdateUserParams,
 } from "../../controllers/update-user/protocols";
 import { prisma } from "../../database/prisma";
-import { User } from "../../models/user";
+import { User } from "../../models/User";
 
 export class PrismaUpdateUserRepository implements IUpdateUserRepository {
   async updateUser(

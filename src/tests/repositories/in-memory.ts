@@ -1,5 +1,5 @@
 import { UpdateUserParams } from "../../controllers/update-user/protocols";
-import { User } from "../../models/user";
+import { User } from "../../models/User";
 
 const users: User[] = [];
 

@@ -1,5 +1,5 @@
 import { prisma } from "../../database/prisma";
-import { User } from "../../models/user";
+import { User } from "../../models/User";
 import { IGetUserByIdRepository } from "../../services/get-user-by-id/protocols";
 
 export class PrismaGetUserByIdRepository implements IGetUserByIdRepository {
