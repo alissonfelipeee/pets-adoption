@@ -17,6 +17,13 @@ export const badRequest = (message: string): HttpResponse<string> => {
   };
 };
 
+export const unauthorized = (message: string): HttpResponse<string> => {
+  return {
+    statusCode: HttpStatusCode.UNAUTHORIZED,
+    body: message,
+  };
+}
+
 export const notFound = (message: string): HttpResponse<string> => {
   return {
     statusCode: HttpStatusCode.NOT_FOUND,
