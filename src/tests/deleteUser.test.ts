@@ -6,12 +6,12 @@ import {
 } from "./repositories/in-memory";
 
 const userExample = {
-  id: 1,
   firstName: "John",
   lastName: "Doe",
   email: "johndoe@gmail.com",
   password: "123456",
-};
+  phone: "(61) 90000-0000",
+} as User;
 
 describe("Delete User", () => {
   it("should delete user", async () => {

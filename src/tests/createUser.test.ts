@@ -10,13 +10,15 @@ const user = {
   lastName: "Doe",
   email: "johndoe@gmail.com",
   password: "123456",
-};
+  phone: "(61) 90000-0000",
+} as User;
 
 const userWithoutFirstName = {
   lastName: "Doe",
   email: "johndoe@gmail.com",
   password: "123456",
-};
+  phone: "(61) 90000-0000",
+} as User;
 
 describe("Create user", () => {
   it("should create a user", async () => {

@@ -8,7 +8,8 @@ const userExample = {
   lastName: "Doe",
   email: "johndoe@gmail.com",
   password: "123456",
-};
+  phone: "(61) 90000-0000",
+} as User;
 
 describe("Update User", () => {
   it("should update user", async () => {

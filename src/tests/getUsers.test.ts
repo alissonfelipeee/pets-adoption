@@ -1,4 +1,5 @@
 import { GetUsersController } from "../controllers/get-users/get-users";
+import { User } from "../models/User";
 import { InMemoryUserRepository } from "./repositories/in-memory";
 
 const userExample = {
@@ -7,7 +8,7 @@ const userExample = {
   lastName: "Doe",
   email: "johndoe@gmail.com",
   password: "123456",
-};
+} as User;
 
 describe("Get Users", () => {
   it("should return a empty list of users", async () => {
@@ -27,8 +28,6 @@ describe("Get Users", () => {
     const userCreated = await inMemoryUserRepository.createUser(userExample);
 
     const { body, statusCode } = await getUsersController.handle();
-
-    // remove password from user
 
     const { password, ...userWithoutPassword } = userCreated;
 
