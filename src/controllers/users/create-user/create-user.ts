@@ -3,13 +3,13 @@ import { User } from "../../../models/User";
 import { HttpRequest, HttpResponse, IController } from "../../protocols";
 import { CreateUserParams, ICreateUserRepository } from "./protocols";
 import { generateHash } from "../../../utils/bcrypt";
-import { IEmailAlreadyExistsRepository } from "../../../services/email-already-exists/protocols";
+import { IGetUserByEmailRepository } from "../../../services/get-user-by-email/protocols";
 import { badRequest, created, serverError } from "../../utils";
 
 export class CreateUserController implements IController {
   constructor(
     private readonly createUserRepository: ICreateUserRepository,
-    private readonly verifyEmailAlreadyExists: IEmailAlreadyExistsRepository
+    private readonly getUserByEmailRepository: IGetUserByEmailRepository
   ) {}
 
   async handle(
@@ -47,7 +47,7 @@ export class CreateUserController implements IController {
       }
 
       const emailAlreadyExists =
-        await this.verifyEmailAlreadyExists.emailAlreadyExists(
+        await this.getUserByEmailRepository.getUserByEmail(
           httpRequest.body.email
         );
 

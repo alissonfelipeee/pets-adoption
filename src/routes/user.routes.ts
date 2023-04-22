@@ -4,7 +4,7 @@ import { PrismaCreateUserRepository } from "../repositories/users/create-user/pr
 import { PrismaUpdateUserRepository } from "../repositories/users/update-user/prisma-update-user";
 import { PrismaDeleteUserRepository } from "../repositories/users/delete-user/prisma-delete-user";
 import { PrismaGetUserByIdRepository } from "../repositories/users/get-user-by-id/prisma-get-user-by-id";
-import { PrismaEmailAlreadyExistsRepository } from "../repositories/users/email-already-exists/prisma-email-already-exists";
+import { PrismaGetUserByEmailRepository } from "../repositories/users/get-user-by-email/prisma-get-user-by-email";
 import { DeleteUserController } from "../controllers/users/delete-user/delete-user";
 import { UpdateUserController } from "../controllers/users/update-user/update-user";
 import { CreateUserController } from "../controllers/users/create-user/create-user";
@@ -21,11 +21,11 @@ export const userRoutes = Router()
   })
   .post("/register", async (req: Request, res: Response) => {
     const prismaCreateUserRepository = new PrismaCreateUserRepository();
-    const prismaEmailAlreadyExistsRepository =
-      new PrismaEmailAlreadyExistsRepository();
+    const prismaGetUSerByEmailRepository =
+      new PrismaGetUserByEmailRepository();
     const createUserController = new CreateUserController(
       prismaCreateUserRepository,
-      prismaEmailAlreadyExistsRepository
+      prismaGetUSerByEmailRepository
     );
 
     const { body, statusCode } = await createUserController.handle({
