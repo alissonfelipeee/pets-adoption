@@ -4,6 +4,7 @@ export interface UpdateUserParams {
   firstName?: string;
   lastName?: string;
   password?: string;
+  phone?: string;
 }
 
 export interface IUpdateUserRepository {

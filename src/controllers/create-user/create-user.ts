@@ -20,7 +20,13 @@ export class CreateUserController implements IController {
         return badRequest("Bad Request - Missing body");
       }
 
-      const requiredFields = ["firstName", "lastName", "email", "password"];
+      const requiredFields = [
+        "firstName",
+        "lastName",
+        "email",
+        "password",
+        "phone",
+      ];
 
       for (const field of requiredFields) {
         if (!httpRequest.body.hasOwnProperty(field)) {

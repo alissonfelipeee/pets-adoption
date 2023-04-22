@@ -11,15 +11,17 @@ export class PrismaCreateUserRepository implements ICreateUserRepository {
     lastName,
     email,
     password,
+    phone,
   }: CreateUserParams): Promise<User> {
-    const user = await prisma.user.create({
+    const user = (await prisma.user.create({
       data: {
         firstName,
         lastName,
         email,
         password,
+        phone,
       },
-    }) as User;
+    })) as User;
 
     return user;
   }

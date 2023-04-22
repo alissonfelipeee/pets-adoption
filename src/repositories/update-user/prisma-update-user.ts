@@ -8,7 +8,7 @@ import { User } from "../../models/user";
 export class PrismaUpdateUserRepository implements IUpdateUserRepository {
   async updateUser(
     id: number,
-    { firstName, lastName, password }: UpdateUserParams
+    { firstName, lastName, password, phone }: UpdateUserParams
   ): Promise<User> {
     const user = await prisma.user.update({
       where: {
@@ -18,6 +18,7 @@ export class PrismaUpdateUserRepository implements IUpdateUserRepository {
         firstName,
         lastName,
         password,
+        phone,
       },
     });
 

@@ -24,6 +24,7 @@ export class UpdateUserController implements IController {
         "firstName",
         "lastName",
         "password",
+        "phone",
       ];
       const someFieldIsNotAllowedToUpdate = Object.keys(httpRequest.body).some(
         (key) => !allowedFieldsToUpdate.includes(key as keyof UpdateUserParams)
