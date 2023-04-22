@@ -1,6 +1,6 @@
 import express from "express";
 import { config } from "dotenv";
-import { router } from "./routes/router";
+import { userRoutes } from "./routes/user.routes";
 
 config();
 
@@ -9,7 +9,7 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
-app.use(router);
+app.use("/users", userRoutes);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

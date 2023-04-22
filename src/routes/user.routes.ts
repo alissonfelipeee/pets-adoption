@@ -10,8 +10,8 @@ import { UpdateUserController } from "../controllers/users/update-user/update-us
 import { CreateUserController } from "../controllers/users/create-user/create-user";
 import { GetUsersController } from "../controllers/users/get-users/get-users";
 
-export const router = Router()
-  .get("/users", async (req: Request, res: Response) => {
+export const userRoutes = Router()
+  .get("/", async (req: Request, res: Response) => {
     const prismaGetUsersRepository = new PrismaGetUsersRepository();
     const getUsersController = new GetUsersController(prismaGetUsersRepository);
 
@@ -19,7 +19,7 @@ export const router = Router()
 
     res.status(statusCode).json(body);
   })
-  .post("/users", async (req: Request, res: Response) => {
+  .post("/register", async (req: Request, res: Response) => {
     const prismaCreateUserRepository = new PrismaCreateUserRepository();
     const prismaEmailAlreadyExistsRepository =
       new PrismaEmailAlreadyExistsRepository();
@@ -35,7 +35,7 @@ export const router = Router()
     res.status(statusCode).json(body);
   })
 
-  .patch("/users/:id", async (req: Request, res: Response) => {
+  .patch("/update/:id", async (req: Request, res: Response) => {
     const prismaUpdateUserRepository = new PrismaUpdateUserRepository();
     const updateUserController = new UpdateUserController(
       prismaUpdateUserRepository
@@ -49,7 +49,7 @@ export const router = Router()
     res.status(statusCode).json(body);
   })
 
-  .delete("/users/:id", async (req: Request, res: Response) => {
+  .delete("/delete/:id", async (req: Request, res: Response) => {
     const prismaDeleteUserRepository = new PrismaDeleteUserRepository();
     const prismaGetUserByIdRepository = new PrismaGetUserByIdRepository();
     const deleteUserController = new DeleteUserController(
