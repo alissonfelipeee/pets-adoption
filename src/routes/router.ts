@@ -1,14 +1,14 @@
 import { Router, Request, Response } from "express";
-import { PrismaGetUsersRepository } from "../repositories/get-users/prisma-get-users";
-import { PrismaCreateUserRepository } from "../repositories/create-user/prisma-create-user";
-import { PrismaUpdateUserRepository } from "../repositories/update-user/prisma-update-user";
-import { PrismaDeleteUserRepository } from "../repositories/delete-user/prisma-delete-user";
-import { PrismaGetUserByIdRepository } from "../repositories/get-user-by-id/prisma-get-user-by-id";
-import { PrismaEmailAlreadyExistsRepository } from "../repositories/email-already-exists/prisma-email-already-exists";
-import { DeleteUserController } from "../controllers/delete-user/delete-user";
-import { UpdateUserController } from "../controllers/update-user/update-user";
-import { CreateUserController } from "../controllers/create-user/create-user";
-import { GetUsersController } from "../controllers/get-users/get-users";
+import { PrismaGetUsersRepository } from "../repositories/users/get-users/prisma-get-users";
+import { PrismaCreateUserRepository } from "../repositories/users/create-user/prisma-create-user";
+import { PrismaUpdateUserRepository } from "../repositories/users/update-user/prisma-update-user";
+import { PrismaDeleteUserRepository } from "../repositories/users/delete-user/prisma-delete-user";
+import { PrismaGetUserByIdRepository } from "../repositories/users/get-user-by-id/prisma-get-user-by-id";
+import { PrismaEmailAlreadyExistsRepository } from "../repositories/users/email-already-exists/prisma-email-already-exists";
+import { DeleteUserController } from "../controllers/users/delete-user/delete-user";
+import { UpdateUserController } from "../controllers/users/update-user/update-user";
+import { CreateUserController } from "../controllers/users/create-user/create-user";
+import { GetUsersController } from "../controllers/users/get-users/get-users";
 
 export const router = Router()
   .get("/users", async (req: Request, res: Response) => {

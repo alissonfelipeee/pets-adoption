@@ -1,7 +1,7 @@
-import { User } from "../../models/User";
-import { generateHash } from "../../utils/bcrypt";
-import { HttpRequest, HttpResponse, IController } from "../protocols";
-import { badRequest, ok, serverError } from "../utils";
+import { User } from "../../../models/User";
+import { generateHash } from "../../../utils/bcrypt";
+import { HttpRequest, HttpResponse, IController } from "../../protocols";
+import { badRequest, ok, serverError } from "../../utils";
 import { IUpdateUserRepository, UpdateUserParams } from "./protocols";
 
 export class UpdateUserController implements IController {

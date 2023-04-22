@@ -1,4 +1,4 @@
-import { GetUsersController } from "../controllers/get-users/get-users";
+import { GetUsersController } from "../controllers/users/get-users/get-users";
 import { User } from "../models/User";
 import { InMemoryUserRepository } from "./repositories/in-memory";
 

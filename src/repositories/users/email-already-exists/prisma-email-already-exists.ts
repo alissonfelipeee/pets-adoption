@@ -1,5 +1,5 @@
-import { prisma } from "../../database/prisma";
-import { IEmailAlreadyExistsRepository } from "../../services/email-already-exists/protocols";
+import { prisma } from "../../../database/prisma";
+import { IEmailAlreadyExistsRepository } from "../../../services/email-already-exists/protocols";
 
 export class PrismaEmailAlreadyExistsRepository
   implements IEmailAlreadyExistsRepository

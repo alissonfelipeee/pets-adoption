@@ -1,6 +1,6 @@
-import { IGetUsersRepository } from "../../controllers/get-users/protocols";
-import { prisma } from "../../database/prisma";
-import { User } from "../../models/User";
+import { IGetUsersRepository } from "../../../controllers/users/get-users/protocols";
+import { prisma } from "../../../database/prisma";
+import { User } from "../../../models/User";
 
 export class PrismaGetUsersRepository implements IGetUsersRepository {
   async getUsers(): Promise<User[]> {

@@ -1,10 +1,10 @@
 import validator from "validator";
-import { User } from "../../models/User";
-import { HttpRequest, HttpResponse, IController } from "../protocols";
+import { User } from "../../../models/User";
+import { HttpRequest, HttpResponse, IController } from "../../protocols";
 import { CreateUserParams, ICreateUserRepository } from "./protocols";
-import { generateHash } from "../../utils/bcrypt";
-import { IEmailAlreadyExistsRepository } from "../../services/email-already-exists/protocols";
-import { badRequest, created, serverError } from "../utils";
+import { generateHash } from "../../../utils/bcrypt";
+import { IEmailAlreadyExistsRepository } from "../../../services/email-already-exists/protocols";
+import { badRequest, created, serverError } from "../../utils";
 
 export class CreateUserController implements IController {
   constructor(

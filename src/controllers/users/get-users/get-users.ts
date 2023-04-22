@@ -1,6 +1,6 @@
-import { User } from "../../models/User";
-import { HttpResponse, IController } from "../protocols";
-import { ok, serverError } from "../utils";
+import { User } from "../../../models/User";
+import { HttpResponse, IController } from "../../protocols";
+import { ok, serverError } from "../../utils";
 import { IGetUsersRepository } from "./protocols";
 export class GetUsersController implements IController {
   constructor(private readonly getUsersRepository: IGetUsersRepository) {}

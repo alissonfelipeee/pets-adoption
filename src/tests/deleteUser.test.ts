@@ -1,5 +1,5 @@
 import { User } from "../models/User";
-import { DeleteUserController } from "./../controllers/delete-user/delete-user";
+import { DeleteUserController } from "./../controllers/users/delete-user/delete-user";
 import {
   InMemoryGetUserByIdRepository,
   InMemoryUserRepository,

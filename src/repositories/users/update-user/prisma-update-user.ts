@@ -1,9 +1,9 @@
 import {
   IUpdateUserRepository,
   UpdateUserParams,
-} from "../../controllers/update-user/protocols";
-import { prisma } from "../../database/prisma";
-import { User } from "../../models/User";
+} from "../../../controllers/users/update-user/protocols";
+import { prisma } from "../../../database/prisma";
+import { User } from "../../../models/User";
 
 export class PrismaUpdateUserRepository implements IUpdateUserRepository {
   async updateUser(
