@@ -1,5 +1,5 @@
-import { User } from "../models/User";
-import { CreateUserController } from "../controllers/users/create-user/create-user";
+import { User } from "../../models/User";
+import { CreateUserController } from "../../controllers/users/create-user/create-user";
 import {
   InMemoryGetUserByEmailRepository,
   InMemoryUserRepository,

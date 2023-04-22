@@ -1,5 +1,5 @@
-import { GetUsersController } from "../controllers/users/get-users/get-users";
-import { User } from "../models/User";
+import { GetUsersController } from "../../controllers/users/get-users/get-users";
+import { User } from "../../models/User";
 import { InMemoryUserRepository } from "./repositories/in-memory";
 
 const userExample = {

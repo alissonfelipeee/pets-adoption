@@ -1,5 +1,5 @@
-import { User } from "../models/User";
-import { UpdateUserController } from "./../controllers/users/update-user/update-user";
+import { User } from "../../models/User";
+import { UpdateUserController } from "./../../controllers/users/update-user/update-user";
 import { InMemoryUserRepository } from "./repositories/in-memory";
 
 const userExample = {
