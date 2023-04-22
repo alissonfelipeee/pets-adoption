@@ -1,3 +1,4 @@
+import { AuthUserController } from "./../controllers/users/auth-user/auth-user";
 import { Router, Request, Response } from "express";
 import { PrismaGetUsersRepository } from "../repositories/users/get-users/prisma-get-users";
 import { PrismaCreateUserRepository } from "../repositories/users/create-user/prisma-create-user";
@@ -9,6 +10,7 @@ import { DeleteUserController } from "../controllers/users/delete-user/delete-us
 import { UpdateUserController } from "../controllers/users/update-user/update-user";
 import { CreateUserController } from "../controllers/users/create-user/create-user";
 import { GetUsersController } from "../controllers/users/get-users/get-users";
+import { AuthUserService } from "../services/auth-user/auth-user";
 
 export const userRoutes = Router()
   .get("/", async (req: Request, res: Response) => {
@@ -21,8 +23,7 @@ export const userRoutes = Router()
   })
   .post("/register", async (req: Request, res: Response) => {
     const prismaCreateUserRepository = new PrismaCreateUserRepository();
-    const prismaGetUSerByEmailRepository =
-      new PrismaGetUserByEmailRepository();
+    const prismaGetUSerByEmailRepository = new PrismaGetUserByEmailRepository();
     const createUserController = new CreateUserController(
       prismaCreateUserRepository,
       prismaGetUSerByEmailRepository
@@ -59,6 +60,17 @@ export const userRoutes = Router()
 
     const { body, statusCode } = await deleteUserController.handle({
       params: req.params,
+    });
+
+    res.status(statusCode).json(body);
+  })
+  .post("/login", async (req: Request, res: Response) => {
+    const prismaGetUserByEmailRepository = new PrismaGetUserByEmailRepository();
+    const authUserService = new AuthUserService(prismaGetUserByEmailRepository);
+    const authUserController = new AuthUserController(authUserService);
+
+    const { body, statusCode } = await authUserController.handle({
+      body: req.body,
     });
 
     res.status(statusCode).json(body);
