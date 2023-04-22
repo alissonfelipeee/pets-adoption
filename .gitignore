@@ -1,0 +1,5 @@
+node_modules
+migrations
+coverage
+.env
+dev.db
