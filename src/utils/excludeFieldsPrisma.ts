@@ -7,13 +7,3 @@ export const excludeFieldsUser = <User, Key extends keyof User>(
   }
   return user;
 };
-
-export const excludeDieldsPet = <Pet, Key extends keyof Pet>(
-  pet: Pet,
-  keys: Key[]
-): Omit<Pet, Key> => {
-  for (let key of keys) {
-    delete pet[key];
-  }
-  return pet;
-};
