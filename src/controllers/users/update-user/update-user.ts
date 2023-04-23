@@ -1,5 +1,6 @@
 import { User } from "../../../models/User";
 import { generateHash } from "../../../utils/bcrypt";
+import { excludeFieldsUser } from "../../../utils/excludeFieldsPrisma";
 import { verifyToken } from "../../../utils/verifyToken";
 import { HttpRequest, HttpResponse, IController } from "../../protocols";
 import { badRequest, ok, serverError, unauthorized } from "../../utils";
@@ -62,9 +63,9 @@ export class UpdateUserController implements IController {
         httpRequest.body
       );
 
-      const { password, ...userWithoutPassword } = user;
+      excludeFieldsUser(user, ["password", "createdAt", "updatedAt"]);
 
-      return ok<User>(userWithoutPassword);
+      return ok<User>(user);
     } catch (error) {
       return serverError();
     }

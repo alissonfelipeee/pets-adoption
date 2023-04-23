@@ -10,6 +10,7 @@ import {
   unauthorized,
 } from "../../utils";
 import { verifyToken } from "../../../utils/verifyToken";
+import { excludeFieldsUser } from "../../../utils/excludeFieldsPrisma";
 
 export class DeleteUserController implements IController {
   constructor(
@@ -51,9 +52,9 @@ export class DeleteUserController implements IController {
 
       const user = await this.deleteUserRepository.delete(+id);
 
-      const { password, ...userWithoutPassword } = user;
+      excludeFieldsUser(user, ["password", "createdAt", "updatedAt"]);
 
-      return ok<User>(userWithoutPassword);
+      return ok<User>(user);
     } catch (error) {
       return serverError();
     }

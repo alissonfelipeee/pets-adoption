@@ -4,6 +4,7 @@ import { CreatePetsParams, ICreatePetsRepository } from "./protocols";
 import { badRequest, created, serverError } from "../../utils";
 import { verifyToken } from "../../../utils/verifyToken";
 import { Pet } from "../../../models/Pet";
+import { excludeFieldsUser } from "../../../utils/excludeFieldsPrisma";
 
 export class CreatePetController implements IController {
   constructor(
@@ -58,6 +59,8 @@ export class CreatePetController implements IController {
       const pet = await this.createPetRepository.createPet({
         ...httpRequest.body,
       });
+
+      excludeFieldsUser(pet.owner, ["password", "createdAt", "updatedAt"]);
 
       return created<Pet>(pet);
     } catch (error) {

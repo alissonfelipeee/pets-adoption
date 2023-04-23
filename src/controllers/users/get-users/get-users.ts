@@ -1,4 +1,5 @@
 import { User } from "../../../models/User";
+import { excludeFieldsUser } from "../../../utils/excludeFieldsPrisma";
 import { HttpResponse, IController } from "../../protocols";
 import { ok, serverError } from "../../utils";
 import { IGetUsersRepository } from "./protocols";
@@ -9,12 +10,11 @@ export class GetUsersController implements IController {
     try {
       const users = await this.getUsersRepository.getUsers();
 
-      const usersWithoutPassword = users.map((user) => {
-        const { password, ...userWithoutPassword } = user;
-        return userWithoutPassword;
-      }) as User[];
+      for (const user of users) {
+        excludeFieldsUser(user, ["password", "createdAt", "updatedAt"]);
+      }
 
-      return ok<User[]>(usersWithoutPassword);
+      return ok<User[]>(users);
     } catch (error) {
       return serverError();
     }

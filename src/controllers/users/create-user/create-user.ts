@@ -60,7 +60,8 @@ export class CreateUserController implements IController {
         password: await generateHash(httpRequest.body.password),
       });
 
-      const { password, ...userWithoutPassword } = user;
+      // For some reason that I can't explain, when using the excludeFieldsUser function, the in-memory repository saves users without the password, resulting in multiple test failures, I will check this calmly after finishing the application.
+      const { password, createdAt, updatedAt, ...userWithoutPassword } = user;
 
       return created<User>(userWithoutPassword);
     } catch (error) {
