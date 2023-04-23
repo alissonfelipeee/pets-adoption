@@ -2,7 +2,7 @@ import { User } from "../../../models/User";
 import { generateHash } from "../../../utils/bcrypt";
 import { verifyToken } from "../../../utils/verifyToken";
 import { HttpRequest, HttpResponse, IController } from "../../protocols";
-import { badRequest, ok, serverError } from "../../utils";
+import { badRequest, ok, serverError, unauthorized } from "../../utils";
 import { IUpdateUserRepository, UpdateUserParams } from "./protocols";
 
 export class UpdateUserController implements IController {
@@ -30,11 +30,11 @@ export class UpdateUserController implements IController {
       const verifyUserToken = verifyToken(authorization);
 
       if (!verifyUserToken) {
-        return badRequest("Bad Request - Invalid token");
+        return unauthorized("Unauthorized - Invalid token");
       }
 
       if (verifyUserToken.id !== Number(id)) {
-        return badRequest("Bad Request - Invalid token for this user");
+        return unauthorized("Unauthorized - Invalid token for this user");
       }
 
       const allowedFieldsToUpdate: (keyof UpdateUserParams)[] = [
