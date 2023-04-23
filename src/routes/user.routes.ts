@@ -11,6 +11,7 @@ import { UpdateUserController } from "../controllers/users/update-user/update-us
 import { CreateUserController } from "../controllers/users/create-user/create-user";
 import { GetUsersController } from "../controllers/users/get-users/get-users";
 import { AuthUserService } from "../services/auth-user/auth-user";
+import { verifyToken } from "../utils/verifyToken";
 
 export const userRoutes = Router()
   .get("/", async (req: Request, res: Response) => {
@@ -45,6 +46,7 @@ export const userRoutes = Router()
     const { body, statusCode } = await updateUserController.handle({
       body: req.body,
       params: req.params,
+      headers: req.headers,
     });
 
     res.status(statusCode).json(body);
