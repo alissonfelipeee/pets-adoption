@@ -1,7 +1,7 @@
 import { AuthUserResponse } from "../../controllers/users/auth-user/protocols";
 import { compareHash } from "../../utils/bcrypt";
+import { generateToken } from "../../utils/generateToken";
 import { IGetUserByEmailRepository } from "../get-user-by-email/protocols";
-import jsonwebtoken from "jsonwebtoken";
 
 export class AuthUserService {
   constructor(
@@ -21,16 +21,7 @@ export class AuthUserService {
       return
     }
 
-    const token = jsonwebtoken.sign(
-      {
-        id: user.id,
-        email: user.email,
-      },
-      "secret",
-      {
-        expiresIn: "1d"
-      }
-    );
+    const token = generateToken(user.id, user.email);
 
     return {
       email: user.email,
