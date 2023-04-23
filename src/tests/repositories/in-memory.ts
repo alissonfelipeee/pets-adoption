@@ -49,3 +49,16 @@ export class InMemoryGetUserByIdRepository {
     return user;
   }
 }
+
+export class InMemoryPetRepository {
+  private pets: Pet[] = pets;
+  async getPets(): Promise<Pet[]> {
+    return this.pets;
+  }
+
+  async createPet(pet: Pet): Promise<Pet> {
+    const newPet = { ...pet, id: this.pets.length + 1 };
+    this.pets.push(newPet);
+    return newPet;
+  }
+}
