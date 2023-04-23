@@ -7,7 +7,7 @@ import {
   InMemoryGetUserByEmailRepository,
   InMemoryGetUserByIdRepository,
   InMemoryUserRepository,
-} from "./repositories/in-memory";
+} from "../repositories/in-memory";
 
 const user = {
   firstName: "John",
@@ -173,7 +173,7 @@ describe("Delete User", () => {
 
     expect(body).toEqual("Unauthorized - Invalid token for this user");
     expect(statusCode).toBe(401);
-  }); 
+  });
 
   it("should return 500 if something goes wrong", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();

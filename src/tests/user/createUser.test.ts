@@ -3,7 +3,7 @@ import { CreateUserController } from "../../controllers/users/create-user/create
 import {
   InMemoryGetUserByEmailRepository,
   InMemoryUserRepository,
-} from "./repositories/in-memory";
+} from "../repositories/in-memory";
 
 const user = {
   firstName: "John",
@@ -43,7 +43,7 @@ describe("Create user", () => {
     expect(statusCode).toBe(201);
   });
 
-  it("shoul not be able create user because not exists a body", async () => {
+  it("should not be able create user because not exists a body", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
     const inMemoryGetUserByEmailRepository =
       new InMemoryGetUserByEmailRepository();

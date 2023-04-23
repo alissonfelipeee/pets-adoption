@@ -6,7 +6,7 @@ import { AuthUserService } from "../../services/auth-user/auth-user";
 import {
   InMemoryGetUserByEmailRepository,
   InMemoryUserRepository,
-} from "./repositories/in-memory";
+} from "../repositories/in-memory";
 
 const user = {
   firstName: "John",

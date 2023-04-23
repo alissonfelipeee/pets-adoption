@@ -6,7 +6,7 @@ import { UpdateUserController } from "./../../controllers/users/update-user/upda
 import {
   InMemoryGetUserByEmailRepository,
   InMemoryUserRepository,
-} from "./repositories/in-memory";
+} from "../repositories/in-memory";
 
 const user = {
   firstName: "John",
@@ -214,7 +214,7 @@ describe("Update User", () => {
       inMemoryUserRepository
     ) as any; // I found no other solution to perform this test other than changing the controller type to ANY, so that the error occurs!
 
-    const {statusCode, body} = await updateUserController.handle({
+    const { statusCode, body } = await updateUserController.handle({
       params: {
         id: 1,
       },

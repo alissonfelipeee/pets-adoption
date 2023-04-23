@@ -1,7 +1,9 @@
-import { UpdateUserParams } from "../../../controllers/users/update-user/protocols";
-import { User } from "../../../models/User";
+import { UpdateUserParams } from "../../controllers/users/update-user/protocols";
+import { Pet } from "../../models/Pet";
+import { User } from "../../models/User";
 
 const users: User[] = [];
+const pets: Pet[] = [];
 
 export class InMemoryUserRepository {
   private users: User[] = users;
