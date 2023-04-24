@@ -74,6 +74,13 @@ export class InMemoryPetRepository {
     this.pets[petIndex] = updatedPet;
     return updatedPet;
   }
+
+  async delete(id: number): Promise<Pet> {
+    const petIndex = this.pets.findIndex((pet) => pet.id === id);
+    const pet = this.pets[petIndex];
+    this.pets.splice(petIndex, 1);
+    return pet;
+  }
 }
 
 export class InMemoryGetPetByIdRepository {
