@@ -1,10 +1,14 @@
+import {
+  IUpdatePetRepository,
+  UpdatePetParams,
+} from "../../../controllers/pets/update-pet/protocols";
 import { prisma } from "../../../database/prisma";
 import { Pet } from "../../../models/Pet";
 
-export class PrismaUpdatePetRepository{
+export class PrismaUpdatePetRepository implements IUpdatePetRepository {
   async updatePet(
     id: number,
-    { name, age, breed, available }: Pet
+    { name, age, breed, available }: UpdatePetParams
   ): Promise<Pet> {
     const pet = await prisma.pet.update({
       where: {
