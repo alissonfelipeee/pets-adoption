@@ -61,4 +61,9 @@ export class InMemoryPetRepository {
     this.pets.push(newPet);
     return newPet;
   }
+
+  async getPetById(id: number): Promise<Pet> {
+    const pet = this.pets.find((pet) => pet.id === id) as Pet;
+    return pet;
+  }
 }
