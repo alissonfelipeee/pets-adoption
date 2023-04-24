@@ -66,4 +66,20 @@ export class InMemoryPetRepository {
     const pet = this.pets.find((pet) => pet.id === id) as Pet;
     return pet;
   }
+
+  async updatePet(id: number, params: any): Promise<Pet> {
+    const petIndex = this.pets.findIndex((pet) => pet.id === id);
+    const pet = this.pets[petIndex];
+    const updatedPet = { ...pet, ...params };
+    this.pets[petIndex] = updatedPet;
+    return updatedPet;
+  }
+}
+
+export class InMemoryGetPetByIdRepository {
+  private pets: Pet[] = pets;
+  async getPetById(id: number): Promise<Pet> {
+    const pet = this.pets.find((pet) => pet.id === id) as Pet;
+    return pet;
+  }
 }
