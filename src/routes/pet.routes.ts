@@ -8,6 +8,8 @@ import { CreatePetController } from "../controllers/pets/create-pets/create-pets
 import { PrismaGetUserByIdRepository } from "../repositories/users/get-user-by-id/prisma-get-user-by-id";
 import { GetPetByIdController } from "../controllers/pets/get-pet-by-id/get-pet-by-id";
 import { UpdatePetController } from '../controllers/pets/update-pet/update-pet';
+import { PrismaDeletePetRepository } from '../repositories/pets/delete-user/prisma-delete-user';
+import { DeletePetController } from '../controllers/pets/delete-pet/delete-pet';
 
 export const petRoutes = Router()
   .get("/all", async (req, res) => {
@@ -60,4 +62,19 @@ export const petRoutes = Router()
     })
 
     res.status(statusCode).json(body)
+  })
+  .delete("/delete/:id", async (req, res) => {
+    const prismaGetPetByIdRepository = new PrismaGetPetByIdRepository();
+    const prismaDeletePetRepository = new PrismaDeletePetRepository();
+    const deletePetController = new DeletePetController(
+      prismaDeletePetRepository,
+      prismaGetPetByIdRepository
+    );
+
+    const { body, statusCode } = await deletePetController.handle({
+      params: req.params,
+      headers: req.headers,
+    });
+
+    res.status(statusCode).json(body);
   });
