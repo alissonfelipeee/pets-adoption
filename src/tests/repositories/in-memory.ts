@@ -1,3 +1,4 @@
+import { UpdatePetAvailabilityController } from "./../../controllers/pets/update-pet-availability/update-pet-availability";
 import { UpdateUserParams } from "../../controllers/users/update-user/protocols";
 import { Pet } from "../../models/Pet";
 import { User } from "../../models/User";
@@ -80,6 +81,14 @@ export class InMemoryPetRepository {
     const pet = this.pets[petIndex];
     this.pets.splice(petIndex, 1);
     return pet;
+  }
+
+  async updatePetAvailability(id: number): Promise<Pet> {
+    const petIndex = this.pets.findIndex((pet) => pet.id === id);
+    const pet = this.pets[petIndex];
+    const updatedPet = { ...pet, available: !pet.available };
+    this.pets[petIndex] = updatedPet;
+    return updatedPet;
   }
 }
 
