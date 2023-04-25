@@ -1,7 +1,10 @@
+import { IUpdatePetAvailabilityRepository } from "../../../controllers/pets/update-pet-availability/protocolts";
 import { prisma } from "../../../database/prisma";
 import { Pet } from "../../../models/Pet";
 
-export class PrismaUpdatePetAvailabilityRepository {
+export class PrismaUpdatePetAvailabilityRepository
+  implements IUpdatePetAvailabilityRepository
+{
   async updatePetAvailability(id: number): Promise<Pet> {
     const pet = await prisma.pet.findUnique({
       where: {
