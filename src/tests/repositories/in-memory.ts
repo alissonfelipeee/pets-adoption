@@ -90,6 +90,18 @@ export class InMemoryPetRepository {
     this.pets[petIndex] = updatedPet;
     return updatedPet;
   }
+
+  async updatePetAdopter(id: number, adopter: User): Promise<Pet> {
+    const petIndex = this.pets.findIndex((pet) => pet.id === id);
+    const pet = this.pets[petIndex];
+    const updatedPet = { ...pet, adopter, available: false };
+    this.pets[petIndex] = updatedPet;
+    const petWithAdopterId = {
+      ...pet,
+      adopterId: adopter.id,
+    };
+    return petWithAdopterId;
+  }
 }
 
 export class InMemoryGetPetByIdRepository {
