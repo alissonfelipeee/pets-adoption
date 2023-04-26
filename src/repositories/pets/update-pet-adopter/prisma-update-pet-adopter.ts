@@ -1,8 +1,11 @@
+import { IUpdatePetAdopterRepository } from "../../../controllers/pets/update-pet-adopter/protocolts";
 import { prisma } from "../../../database/prisma";
 import { Pet } from "../../../models/Pet";
 import { User } from "../../../models/User";
 
-export class PrismaUpdatePetAdopterRepository {
+export class PrismaUpdatePetAdopterRepository
+  implements IUpdatePetAdopterRepository
+{
   async updatePetAdopter(id: number, adopter: User): Promise<Pet> {
     const pet = await prisma.pet.update({
       where: {

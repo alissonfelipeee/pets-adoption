@@ -12,6 +12,8 @@ import { PrismaDeletePetRepository } from "../repositories/pets/delete-user/pris
 import { DeletePetController } from "../controllers/pets/delete-pet/delete-pet";
 import { PrismaUpdatePetAvailabilityRepository } from "../repositories/pets/update-pet-availability/prisma-update-pet-availability";
 import { UpdatePetAvailabilityController } from "../controllers/pets/update-pet-availability/update-pet-availability";
+import { UpdatePetAdopterController } from "../controllers/pets/update-pet-adopter/update-pet-adopter";
+import { PrismaUpdatePetAdopterRepository } from "../repositories/pets/update-pet-adopter/prisma-update-pet-adopter";
 
 export const petRoutes = Router()
   .get("/all", async (req, res) => {
@@ -90,6 +92,24 @@ export const petRoutes = Router()
     );
 
     const { body, statusCode } = await updatePetAvailabilityController.handle({
+      params: req.params,
+      headers: req.headers,
+    });
+
+    res.status(statusCode).json(body);
+  })
+  .patch("/adopt/:id", async (req, res) => {
+    const prismaUpdatePetAdopterRepository =
+      new PrismaUpdatePetAdopterRepository();
+    const prismaGetUserByIdRepository = new PrismaGetUserByIdRepository();
+    const prismaGetPetByIdRepository = new PrismaGetPetByIdRepository();
+    const updatePetAdopterController = new UpdatePetAdopterController(
+      prismaUpdatePetAdopterRepository,
+      prismaGetUserByIdRepository,
+      prismaGetPetByIdRepository
+    );
+
+    const { body, statusCode } = await updatePetAdopterController.handle({
       params: req.params,
       headers: req.headers,
     });
