@@ -9,26 +9,26 @@ import {
 } from "../repositories/in-memory";
 import { userExample } from "../utils/global";
 
+const inMemoryUserRepository = new InMemoryUserRepository();
+const inMemoryGetUserByEmailRepository = new InMemoryGetUserByEmailRepository();
+
+const createUserController = new CreateUserController(
+  inMemoryUserRepository,
+  inMemoryGetUserByEmailRepository
+);
+
+const authUserService = new AuthUserService(inMemoryGetUserByEmailRepository);
+const authUserController = new AuthUserController(authUserService);
+
+const updateUserController = new UpdateUserController(inMemoryUserRepository);
+
 let token: string;
 
 describe("Update User", () => {
   beforeAll(async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryGetUserByEmailRepository =
-      new InMemoryGetUserByEmailRepository();
-    const createUserController = new CreateUserController(
-      inMemoryUserRepository,
-      inMemoryGetUserByEmailRepository
-    );
-
     await createUserController.handle({
       body: userExample,
     });
-
-    const authUserService = new AuthUserService(
-      inMemoryGetUserByEmailRepository
-    );
-    const authUserController = new AuthUserController(authUserService);
 
     const { body } = await authUserController.handle({
       body: {
@@ -42,11 +42,6 @@ describe("Update User", () => {
   });
 
   it("should update user", async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const updateUserController = new UpdateUserController(
-      inMemoryUserRepository
-    );
-
     const { statusCode, body } = await updateUserController.handle({
       params: {
         id: 1,
@@ -69,11 +64,6 @@ describe("Update User", () => {
   });
 
   it("should update user and update password", async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const updateUserController = new UpdateUserController(
-      inMemoryUserRepository
-    );
-
     const { statusCode, body } = await updateUserController.handle({
       params: {
         id: 1,
@@ -97,11 +87,6 @@ describe("Update User", () => {
   });
 
   it("should not be able update user because not exists a param: id", async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const updateUserController = new UpdateUserController(
-      inMemoryUserRepository
-    );
-
     const { statusCode, body } = await updateUserController.handle({
       params: {},
       body: {
@@ -117,11 +102,6 @@ describe("Update User", () => {
   });
 
   it("should not be able update user because not exists a header: authorization", async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const updateUserController = new UpdateUserController(
-      inMemoryUserRepository
-    );
-
     const { statusCode, body } = await updateUserController.handle({
       params: {
         id: 1,
@@ -137,11 +117,6 @@ describe("Update User", () => {
   });
 
   it("should not be able update user because not exists a body in request", async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const updateUserController = new UpdateUserController(
-      inMemoryUserRepository
-    );
-
     const { statusCode, body } = await updateUserController.handle({
       params: {
         id: 1,
@@ -156,11 +131,6 @@ describe("Update User", () => {
   });
 
   it("should not be able update user because token is invalid", async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const updateUserController = new UpdateUserController(
-      inMemoryUserRepository
-    );
-
     const { statusCode, body } = await updateUserController.handle({
       params: {
         id: 1,
@@ -178,11 +148,6 @@ describe("Update User", () => {
   });
 
   it("should not be able update user because token not belongs to this user", async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const updateUserController = new UpdateUserController(
-      inMemoryUserRepository
-    );
-
     await inMemoryUserRepository.createUser(userExample);
 
     const { statusCode, body } = await updateUserController.handle({
@@ -202,11 +167,6 @@ describe("Update User", () => {
   });
 
   it("should not be able update user because invalid fields were received", async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const updateUserController = new UpdateUserController(
-      inMemoryUserRepository
-    );
-
     const { statusCode, body } = await updateUserController.handle({
       params: {
         id: 1,
@@ -224,11 +184,6 @@ describe("Update User", () => {
   });
 
   it("should not be able update user because occured internal error", async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const updateUserController = new UpdateUserController(
-      inMemoryUserRepository
-    );
-
     jest
       .spyOn(inMemoryUserRepository, "updateUser")
       .mockImplementationOnce(() => {

@@ -2,11 +2,11 @@ import { GetUsersController } from "../../controllers/users/get-users/get-users"
 import { InMemoryUserRepository } from "../repositories/in-memory";
 import { userExample } from "../utils/global";
 
+const inMemoryUserRepository = new InMemoryUserRepository();
+const getUsersController = new GetUsersController(inMemoryUserRepository);
+
 describe("Get Users", () => {
   it("should return a empty list of users", async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const getUsersController = new GetUsersController(inMemoryUserRepository);
-
     const { body, statusCode } = await getUsersController.handle();
 
     expect(body).toEqual([]);
@@ -14,9 +14,6 @@ describe("Get Users", () => {
   });
 
   it("should return a list of users with 1 user", async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const getUsersController = new GetUsersController(inMemoryUserRepository);
-
     const userCreated = await inMemoryUserRepository.createUser(userExample);
 
     const { body, statusCode } = await getUsersController.handle();

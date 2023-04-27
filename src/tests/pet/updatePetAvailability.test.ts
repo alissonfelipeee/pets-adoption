@@ -12,30 +12,36 @@ import {
 } from "../repositories/in-memory";
 import { petExample, userExample } from "../utils/global";
 
+const inMemoryUserRepository = new InMemoryUserRepository();
+const inMemoryGetUserByEmailRepository = new InMemoryGetUserByEmailRepository();
+const createUserController = new CreateUserController(
+  inMemoryUserRepository,
+  inMemoryGetUserByEmailRepository
+);
+
+const authUserService = new AuthUserService(inMemoryGetUserByEmailRepository);
+const authUserController = new AuthUserController(authUserService);
+
+const inMemoryPetRepository = new InMemoryPetRepository();
+const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
+const createPetController = new CreatePetController(
+  inMemoryPetRepository,
+  inMemoryGetUserByIdRepository
+);
+
+const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
+const updatePetAvailabilityController = new UpdatePetAvailabilityController(
+  inMemoryPetRepository,
+  inMemoryGetPetByIdRepository
+);
+
 let token: string;
 
 describe("Update Pet Availability", () => {
   beforeAll(async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryGetUserByEmailRepository =
-      new InMemoryGetUserByEmailRepository();
-    const createUserController = new CreateUserController(
-      inMemoryUserRepository,
-      inMemoryGetUserByEmailRepository
-    );
-
-    // create user
-
     await createUserController.handle({
       body: userExample,
     });
-
-    const authUserService = new AuthUserService(
-      inMemoryGetUserByEmailRepository
-    );
-    const authUserController = new AuthUserController(authUserService);
-
-    // auth user
 
     const { body } = await authUserController.handle({
       body: {
@@ -47,15 +53,6 @@ describe("Update Pet Availability", () => {
     const bodyinJson = JSON.stringify(body);
     token = JSON.parse(bodyinJson).token;
 
-    // create pet
-
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
-    const createPetController = new CreatePetController(
-      inMemoryPetRepository,
-      inMemoryGetUserByIdRepository
-    );
-
     await createPetController.handle({
       body: petExample,
       headers: {
@@ -65,13 +62,6 @@ describe("Update Pet Availability", () => {
   });
 
   it("should be able to update pet availability", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
-    const updatePetAvailabilityController = new UpdatePetAvailabilityController(
-      inMemoryPetRepository,
-      inMemoryGetPetByIdRepository
-    );
-
     const { statusCode, body } = await updatePetAvailabilityController.handle({
       params: {
         id: 1,
@@ -89,13 +79,6 @@ describe("Update Pet Availability", () => {
   });
 
   it("should not be able to update pet availability because missing param: id", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
-    const updatePetAvailabilityController = new UpdatePetAvailabilityController(
-      inMemoryPetRepository,
-      inMemoryGetPetByIdRepository
-    );
-
     const { statusCode, body } = await updatePetAvailabilityController.handle({
       params: {},
       headers: {
@@ -108,13 +91,6 @@ describe("Update Pet Availability", () => {
   });
 
   it("should not be able to update pet availability because missing header: authorization", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
-    const updatePetAvailabilityController = new UpdatePetAvailabilityController(
-      inMemoryPetRepository,
-      inMemoryGetPetByIdRepository
-    );
-
     const { statusCode, body } = await updatePetAvailabilityController.handle({
       params: {
         id: 1,
@@ -127,13 +103,6 @@ describe("Update Pet Availability", () => {
   });
 
   it("should not be able to update pet availability because pet not exists", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
-    const updatePetAvailabilityController = new UpdatePetAvailabilityController(
-      inMemoryPetRepository,
-      inMemoryGetPetByIdRepository
-    );
-
     const { statusCode, body } = await updatePetAvailabilityController.handle({
       params: {
         id: 2,
@@ -148,13 +117,6 @@ describe("Update Pet Availability", () => {
   });
 
   it("should not be able to update pet availability because token is invalid", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
-    const updatePetAvailabilityController = new UpdatePetAvailabilityController(
-      inMemoryPetRepository,
-      inMemoryGetPetByIdRepository
-    );
-
     const { statusCode, body } = await updatePetAvailabilityController.handle({
       params: {
         id: 1,
@@ -169,14 +131,6 @@ describe("Update Pet Availability", () => {
   });
 
   it("should not be able update pet availability because token not belongs to this user", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
-    const updatePetAvailabilityController = new UpdatePetAvailabilityController(
-      inMemoryPetRepository,
-      inMemoryGetPetByIdRepository
-    );
-
     const responseCreatePet = await inMemoryUserRepository.createUser({
       ...userExample,
       email: "johndoe2@gmail.com",
@@ -201,13 +155,6 @@ describe("Update Pet Availability", () => {
   });
 
   it("should not be able update pet availability because occured internal error", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
-    const updatePetAvailabilityController = new UpdatePetAvailabilityController(
-      inMemoryPetRepository,
-      inMemoryGetPetByIdRepository
-    );
-
     jest
       .spyOn(inMemoryPetRepository, "updatePetAvailability")
       .mockImplementationOnce(() => {

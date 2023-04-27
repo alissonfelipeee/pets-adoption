@@ -10,26 +10,30 @@ import {
 } from "../repositories/in-memory";
 import { userExample } from "../utils/global";
 
+const inMemoryUserRepository = new InMemoryUserRepository();
+const inMemoryGetUserByEmailRepository = new InMemoryGetUserByEmailRepository();
+const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
+
+const createUserController = new CreateUserController(
+  inMemoryUserRepository,
+  inMemoryGetUserByEmailRepository
+);
+
+const authUserService = new AuthUserService(inMemoryGetUserByEmailRepository);
+const authUserController = new AuthUserController(authUserService);
+
+const deleteUserController = new DeleteUserController(
+  inMemoryUserRepository,
+  inMemoryGetUserByIdRepository
+);
+
 let token: string;
 
 describe("Delete User", () => {
   beforeEach(async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryGetUserByEmailRepository =
-      new InMemoryGetUserByEmailRepository();
-    const createUserController = new CreateUserController(
-      inMemoryUserRepository,
-      inMemoryGetUserByEmailRepository
-    );
-
     await createUserController.handle({
       body: userExample,
     });
-
-    const authUserService = new AuthUserService(
-      inMemoryGetUserByEmailRepository
-    );
-    const authUserController = new AuthUserController(authUserService);
 
     const { body } = await authUserController.handle({
       body: {
@@ -43,13 +47,6 @@ describe("Delete User", () => {
   });
 
   it("should delete user", async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
-    const deleteUserController = new DeleteUserController(
-      inMemoryUserRepository,
-      inMemoryGetUserByIdRepository
-    );
-
     const { body, statusCode } = await deleteUserController.handle({
       params: {
         id: 1,
@@ -66,13 +63,6 @@ describe("Delete User", () => {
   });
 
   it("should not be able delete user because not exists a param: id", async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
-    const deleteUserController = new DeleteUserController(
-      inMemoryUserRepository,
-      inMemoryGetUserByIdRepository
-    );
-
     const { body, statusCode } = await deleteUserController.handle({
       params: {},
       headers: {
@@ -85,13 +75,6 @@ describe("Delete User", () => {
   });
 
   it("should not be able delete user because not exists a header: authorization", async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
-    const deleteUserController = new DeleteUserController(
-      inMemoryUserRepository,
-      inMemoryGetUserByIdRepository
-    );
-
     const { body, statusCode } = await deleteUserController.handle({
       params: {
         id: 1,
@@ -104,13 +87,6 @@ describe("Delete User", () => {
   });
 
   it("should not be able delete user because user not exists", async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
-    const deleteUserController = new DeleteUserController(
-      inMemoryUserRepository,
-      inMemoryGetUserByIdRepository
-    );
-
     const { body, statusCode } = await deleteUserController.handle({
       params: {
         id: 2,
@@ -125,13 +101,6 @@ describe("Delete User", () => {
   });
 
   it("should not be able delete user because token is invalid", async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
-    const deleteUserController = new DeleteUserController(
-      inMemoryUserRepository,
-      inMemoryGetUserByIdRepository
-    );
-
     const { body, statusCode } = await deleteUserController.handle({
       params: {
         id: 1,
@@ -146,13 +115,6 @@ describe("Delete User", () => {
   });
 
   it("should not be able delete user because token not belongs to this user", async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
-    const deleteUserController = new DeleteUserController(
-      inMemoryUserRepository,
-      inMemoryGetUserByIdRepository
-    );
-
     await inMemoryUserRepository.createUser(userExample);
 
     const { body, statusCode } = await deleteUserController.handle({
@@ -169,13 +131,6 @@ describe("Delete User", () => {
   });
 
   it("should not be able delete user because occured internal error", async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
-    const deleteUserController = new DeleteUserController(
-      inMemoryUserRepository,
-      inMemoryGetUserByIdRepository
-    );
-
     jest.spyOn(inMemoryUserRepository, "delete").mockImplementationOnce(() => {
       throw new Error();
     });

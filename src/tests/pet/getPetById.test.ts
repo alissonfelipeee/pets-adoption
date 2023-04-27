@@ -11,29 +11,33 @@ import {
 } from "../repositories/in-memory";
 import { petExample, userExample } from "../utils/global";
 
+const inMemoryUserRepository = new InMemoryUserRepository();
+const inMemoryGetUserByEmailRepository = new InMemoryGetUserByEmailRepository();
+const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
+const inMemoryPetRepository = new InMemoryPetRepository();
+
+const createUserController = new CreateUserController(
+  inMemoryUserRepository,
+  inMemoryGetUserByEmailRepository
+);
+
+const authUserService = new AuthUserService(inMemoryGetUserByEmailRepository);
+const authUserController = new AuthUserController(authUserService);
+
+const createPetController = new CreatePetController(
+  inMemoryPetRepository,
+  inMemoryGetUserByIdRepository
+);
+
+const getPetByIdController = new GetPetByIdController(inMemoryPetRepository);
+
 let token: string;
 
 describe("Get Pet by ID", () => {
   beforeAll(async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryGetUserByEmailRepository =
-      new InMemoryGetUserByEmailRepository();
-    const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
-    const inMemoryPetRepository = new InMemoryPetRepository();
-
-    const createUserController = new CreateUserController(
-      inMemoryUserRepository,
-      inMemoryGetUserByEmailRepository
-    );
-
     await createUserController.handle({
       body: userExample,
     });
-
-    const authUserService = new AuthUserService(
-      inMemoryGetUserByEmailRepository
-    );
-    const authUserController = new AuthUserController(authUserService);
 
     const { body } = await authUserController.handle({
       body: {
@@ -45,11 +49,6 @@ describe("Get Pet by ID", () => {
     const bodyinJson = JSON.stringify(body);
     token = JSON.parse(bodyinJson).token;
 
-    const createPetController = new CreatePetController(
-      inMemoryPetRepository,
-      inMemoryGetUserByIdRepository
-    );
-
     await createPetController.handle({
       body: petExample,
       headers: {
@@ -59,11 +58,6 @@ describe("Get Pet by ID", () => {
   });
 
   it("should return pet with id 1", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const getPetByIdController = new GetPetByIdController(
-      inMemoryPetRepository
-    );
-
     const { body, statusCode } = await getPetByIdController.handle({
       params: {
         id: 1,
@@ -75,11 +69,6 @@ describe("Get Pet by ID", () => {
   });
 
   it("should not be able get pet by id because pet not exists", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const getPetByIdController = new GetPetByIdController(
-      inMemoryPetRepository
-    );
-
     const { body, statusCode } = await getPetByIdController.handle({
       params: {
         id: 2,
@@ -91,11 +80,6 @@ describe("Get Pet by ID", () => {
   });
 
   it("should not be able get pet by id because not exists a param: id", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const getPetByIdController = new GetPetByIdController(
-      inMemoryPetRepository
-    );
-
     const { body, statusCode } = await getPetByIdController.handle({
       params: {},
     });
@@ -105,11 +89,6 @@ describe("Get Pet by ID", () => {
   });
 
   it("should not be able get pet by id because occured internal error", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const getPetByIdController = new GetPetByIdController(
-      inMemoryPetRepository
-    );
-
     jest.spyOn(inMemoryPetRepository, "getPetById").mockImplementation(() => {
       throw new Error();
     });

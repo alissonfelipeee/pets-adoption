@@ -11,26 +11,30 @@ import { AuthUserController } from "../../controllers/users/auth-user/auth-user"
 import { petExample, userExample } from "../utils/global";
 import { Pet } from "../../models/Pet";
 
+const inMemoryUserRepository = new InMemoryUserRepository();
+const inMemoryGetUserByEmailRepository = new InMemoryGetUserByEmailRepository();
+const createUserController = new CreateUserController(
+  inMemoryUserRepository,
+  inMemoryGetUserByEmailRepository
+);
+
+const authUserService = new AuthUserService(inMemoryGetUserByEmailRepository);
+const authUserController = new AuthUserController(authUserService);
+
+const inMemoryPetRepository = new InMemoryPetRepository();
+const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
+const createPetController = new CreatePetController(
+  inMemoryPetRepository,
+  inMemoryGetUserByIdRepository
+);
+
 let token: string;
 
 describe("Create pet", () => {
   beforeAll(async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryGetUserByEmailRepository =
-      new InMemoryGetUserByEmailRepository();
-    const createUserController = new CreateUserController(
-      inMemoryUserRepository,
-      inMemoryGetUserByEmailRepository
-    );
-
     await createUserController.handle({
       body: userExample,
     });
-
-    const authUserService = new AuthUserService(
-      inMemoryGetUserByEmailRepository
-    );
-    const authUserController = new AuthUserController(authUserService);
 
     const { body } = await authUserController.handle({
       body: {
@@ -44,13 +48,6 @@ describe("Create pet", () => {
   });
 
   it("should create a pet", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
-    const createPetController = new CreatePetController(
-      inMemoryPetRepository,
-      inMemoryGetUserByIdRepository
-    );
-
     const { body, statusCode } = await createPetController.handle({
       body: petExample,
       headers: {
@@ -63,13 +60,6 @@ describe("Create pet", () => {
   });
 
   it("should not be able create pet because not exists a body in request", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
-    const createPetController = new CreatePetController(
-      inMemoryPetRepository,
-      inMemoryGetUserByIdRepository
-    );
-
     const { body, statusCode } = await createPetController.handle({
       headers: {
         authorization: `Bearer ${token}`,
@@ -81,13 +71,6 @@ describe("Create pet", () => {
   });
 
   it("should not be able create pet because not exists a header: authorization", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
-    const createPetController = new CreatePetController(
-      inMemoryPetRepository,
-      inMemoryGetUserByIdRepository
-    );
-
     const { body, statusCode } = await createPetController.handle({
       body: petExample,
       headers: {},
@@ -98,13 +81,6 @@ describe("Create pet", () => {
   });
 
   it("should not be able create pet because missing fields in body", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
-    const createPetController = new CreatePetController(
-      inMemoryPetRepository,
-      inMemoryGetUserByIdRepository
-    );
-
     const { body, statusCode } = await createPetController.handle({
       body: {
         name: "Dog",
@@ -121,13 +97,6 @@ describe("Create pet", () => {
   });
 
   it("should not be able create pet because invalid fields", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
-    const createPetController = new CreatePetController(
-      inMemoryPetRepository,
-      inMemoryGetUserByIdRepository
-    );
-
     const { body, statusCode } = await createPetController.handle({
       body: {
         name: "",
@@ -146,13 +115,6 @@ describe("Create pet", () => {
   });
 
   it("should not be able create pet because invalid token", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
-    const createPetController = new CreatePetController(
-      inMemoryPetRepository,
-      inMemoryGetUserByIdRepository
-    );
-
     const { body, statusCode } = await createPetController.handle({
       body: petExample,
       headers: {
@@ -165,13 +127,6 @@ describe("Create pet", () => {
   });
 
   it("should not be able create pet because occurred internal error", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
-    const createPetController = new CreatePetController(
-      inMemoryPetRepository,
-      inMemoryGetUserByIdRepository
-    );
-
     jest
       .spyOn(inMemoryPetRepository, "createPet")
       .mockImplementationOnce(async () => {
@@ -190,14 +145,6 @@ describe("Create pet", () => {
   });
 
   it("should not be able create pet because user not exists", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
-    const createPetController = new CreatePetController(
-      inMemoryPetRepository,
-      inMemoryGetUserByIdRepository
-    );
-
     await inMemoryUserRepository.delete(userExample.id);
 
     const { body, statusCode } = await createPetController.handle({

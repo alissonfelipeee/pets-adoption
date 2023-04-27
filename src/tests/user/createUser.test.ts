@@ -13,16 +13,15 @@ const userWithoutFirstName = {
   phone: "(61) 90000-0000",
 } as User;
 
+const inMemoryUserRepository = new InMemoryUserRepository();
+const inMemoryGetUserByEmailRepository = new InMemoryGetUserByEmailRepository();
+const createUserController = new CreateUserController(
+  inMemoryUserRepository,
+  inMemoryGetUserByEmailRepository
+);
+
 describe("Create user", () => {
   it("should create a user", async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryGetUserByEmailRepository =
-      new InMemoryGetUserByEmailRepository();
-    const createUserController = new CreateUserController(
-      inMemoryUserRepository,
-      inMemoryGetUserByEmailRepository
-    );
-
     const { body, statusCode } = await createUserController.handle({
       body: userExample,
     });
@@ -37,14 +36,6 @@ describe("Create user", () => {
   });
 
   it("should not be able create user because not exists a body in request", async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryGetUserByEmailRepository =
-      new InMemoryGetUserByEmailRepository();
-    const createUserController = new CreateUserController(
-      inMemoryUserRepository,
-      inMemoryGetUserByEmailRepository
-    );
-
     const { body, statusCode } = await createUserController.handle({});
 
     expect(body).toEqual("Bad Request - Missing body");
@@ -52,14 +43,6 @@ describe("Create user", () => {
   });
 
   it("should not be able create user because missing field in body: firstName", async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryGetUserByEmailRepository =
-      new InMemoryGetUserByEmailRepository();
-    const createUserController = new CreateUserController(
-      inMemoryUserRepository,
-      inMemoryGetUserByEmailRepository
-    );
-
     const { body, statusCode } = await createUserController.handle({
       body: userWithoutFirstName as User,
     });
@@ -69,14 +52,6 @@ describe("Create user", () => {
   });
 
   it("should not be able create user because field empty in body: firstName", async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryGetUserByEmailRepository =
-      new InMemoryGetUserByEmailRepository();
-    const createUserController = new CreateUserController(
-      inMemoryUserRepository,
-      inMemoryGetUserByEmailRepository
-    );
-
     const { body, statusCode } = await createUserController.handle({
       body: { ...userExample, firstName: "" },
     });
@@ -86,14 +61,6 @@ describe("Create user", () => {
   });
 
   it("should not be able create user because email is invalid", async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryGetUserByEmailRepository =
-      new InMemoryGetUserByEmailRepository();
-    const createUserController = new CreateUserController(
-      inMemoryUserRepository,
-      inMemoryGetUserByEmailRepository
-    );
-
     const { body, statusCode } = await createUserController.handle({
       body: { ...userExample, email: "johndoe" },
     });
@@ -103,14 +70,6 @@ describe("Create user", () => {
   });
 
   it("should not be able create user because email already exists", async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryGetUserByEmailRepository =
-      new InMemoryGetUserByEmailRepository();
-    const createUserController = new CreateUserController(
-      inMemoryUserRepository,
-      inMemoryGetUserByEmailRepository
-    );
-
     await createUserController.handle({
       body: userExample,
     });
@@ -124,14 +83,6 @@ describe("Create user", () => {
   });
 
   it("should not be able create user because occurred internal error", async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryGetUserByEmailRepository =
-      new InMemoryGetUserByEmailRepository();
-    const createUserController = new CreateUserController(
-      inMemoryUserRepository,
-      inMemoryGetUserByEmailRepository
-    );
-
     jest
       .spyOn(inMemoryUserRepository, "createUser")
       .mockImplementationOnce(() => {

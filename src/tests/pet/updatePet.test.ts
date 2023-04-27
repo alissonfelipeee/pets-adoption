@@ -13,30 +13,36 @@ import {
 import { petExample, userExample } from "../utils/global";
 import { Pet } from "../../models/Pet";
 
+const inMemoryUserRepository = new InMemoryUserRepository();
+const inMemoryGetUserByEmailRepository = new InMemoryGetUserByEmailRepository();
+const createUserController = new CreateUserController(
+  inMemoryUserRepository,
+  inMemoryGetUserByEmailRepository
+);
+
+const authUserService = new AuthUserService(inMemoryGetUserByEmailRepository);
+const authUserController = new AuthUserController(authUserService);
+
+const inMemoryPetRepository = new InMemoryPetRepository();
+const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
+const createPetController = new CreatePetController(
+  inMemoryPetRepository,
+  inMemoryGetUserByIdRepository
+);
+
+const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
+const updatePetController = new UpdatePetController(
+  inMemoryPetRepository,
+  inMemoryGetPetByIdRepository
+);
+
 let token: string;
 
 describe("Update Pet", () => {
   beforeAll(async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryGetUserByEmailRepository =
-      new InMemoryGetUserByEmailRepository();
-    const createUserController = new CreateUserController(
-      inMemoryUserRepository,
-      inMemoryGetUserByEmailRepository
-    );
-
-    // create user
-
     await createUserController.handle({
       body: userExample,
     });
-
-    const authUserService = new AuthUserService(
-      inMemoryGetUserByEmailRepository
-    );
-    const authUserController = new AuthUserController(authUserService);
-
-    // auth user
 
     const { body } = await authUserController.handle({
       body: {
@@ -48,15 +54,6 @@ describe("Update Pet", () => {
     const bodyinJson = JSON.stringify(body);
     token = JSON.parse(bodyinJson).token;
 
-    // create pet
-
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
-    const createPetController = new CreatePetController(
-      inMemoryPetRepository,
-      inMemoryGetUserByIdRepository
-    );
-
     await createPetController.handle({
       body: petExample,
       headers: {
@@ -66,13 +63,6 @@ describe("Update Pet", () => {
   });
 
   it("should update a pet", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
-    const updatePetController = new UpdatePetController(
-      inMemoryPetRepository,
-      inMemoryGetPetByIdRepository
-    );
-
     const { statusCode, body } = await updatePetController.handle({
       body: {
         age: 2,
@@ -93,13 +83,6 @@ describe("Update Pet", () => {
   });
 
   it("should not be able update petbecause not exists a param: id", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
-    const updatePetController = new UpdatePetController(
-      inMemoryPetRepository,
-      inMemoryGetPetByIdRepository
-    );
-
     const { statusCode, body } = await updatePetController.handle({
       body: {
         age: 2,
@@ -115,19 +98,10 @@ describe("Update Pet", () => {
   });
 
   it("should not be able update petbecause not exists a header: authorization", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
-    const updatePetController = new UpdatePetController(
-      inMemoryPetRepository,
-      inMemoryGetPetByIdRepository
-    );
-
-    const updatedPet = {
-      age: 2,
-    } as Pet;
-
     const { statusCode, body } = await updatePetController.handle({
-      body: updatedPet,
+      body: {
+        age: 2,
+      },
       headers: {},
       params: {
         id: 1,
@@ -139,13 +113,6 @@ describe("Update Pet", () => {
   });
 
   it("should not be able update petbecause not exists a body in request", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
-    const updatePetController = new UpdatePetController(
-      inMemoryPetRepository,
-      inMemoryGetPetByIdRepository
-    );
-
     const { statusCode, body } = await updatePetController.handle({
       headers: {
         authorization: `Bearer ${token}`,
@@ -160,13 +127,6 @@ describe("Update Pet", () => {
   });
 
   it("should not be able update petbecause body is empty", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
-    const updatePetController = new UpdatePetController(
-      inMemoryPetRepository,
-      inMemoryGetPetByIdRepository
-    );
-
     const { statusCode, body } = await updatePetController.handle({
       body: {},
       headers: {
@@ -182,13 +142,6 @@ describe("Update Pet", () => {
   });
 
   it("should not be able update petbecause pet not exists", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
-    const updatePetController = new UpdatePetController(
-      inMemoryPetRepository,
-      inMemoryGetPetByIdRepository
-    );
-
     const { statusCode, body } = await updatePetController.handle({
       body: {
         age: 2,
@@ -206,13 +159,6 @@ describe("Update Pet", () => {
   });
 
   it("should not be able update petbecause token is invalid", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
-    const updatePetController = new UpdatePetController(
-      inMemoryPetRepository,
-      inMemoryGetPetByIdRepository
-    );
-
     const { statusCode, body } = await updatePetController.handle({
       body: {
         age: 2,
@@ -230,29 +176,12 @@ describe("Update Pet", () => {
   });
 
   it("should not be able update petbecause token not belongs to this user", async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryGetUserByEmailRepository =
-      new InMemoryGetUserByEmailRepository();
-    const createUserController = new CreateUserController(
-      inMemoryUserRepository,
-      inMemoryGetUserByEmailRepository
-    );
-
-    // create another user
-
     await createUserController.handle({
       body: {
         ...userExample,
         email: "johndoe2@gmail.com",
       },
     });
-
-    const authUserService = new AuthUserService(
-      inMemoryGetUserByEmailRepository
-    );
-    const authUserController = new AuthUserController(authUserService);
-
-    // auth another user
 
     const responseAuth = await authUserController.handle({
       body: {
@@ -263,13 +192,6 @@ describe("Update Pet", () => {
 
     const bodyinJsonAnotherUser = JSON.stringify(responseAuth.body);
     const tokenAnotherUser = JSON.parse(bodyinJsonAnotherUser).token;
-
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
-    const updatePetController = new UpdatePetController(
-      inMemoryPetRepository,
-      inMemoryGetPetByIdRepository
-    );
 
     const { statusCode, body } = await updatePetController.handle({
       body: {
@@ -288,13 +210,6 @@ describe("Update Pet", () => {
   });
 
   it("should not be able update petbecause invalid fields were received", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
-    const updatePetController = new UpdatePetController(
-      inMemoryPetRepository,
-      inMemoryGetPetByIdRepository
-    );
-
     const { statusCode, body } = await updatePetController.handle({
       body: {
         weight: 2,
@@ -312,16 +227,11 @@ describe("Update Pet", () => {
   });
 
   it("should not be able update pet because occured internal error", async () => {
-    const inMemoryPetRepository = new InMemoryPetRepository();
-    const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
-    const updatePetController = new UpdatePetController(
-      inMemoryPetRepository,
-      inMemoryGetPetByIdRepository
-    );
-
-    jest.spyOn(inMemoryPetRepository, "updatePet").mockImplementationOnce(() => {
-      throw new Error();
-    });
+    jest
+      .spyOn(inMemoryPetRepository, "updatePet")
+      .mockImplementationOnce(() => {
+        throw new Error();
+      });
 
     const { statusCode, body } = await updatePetController.handle({
       body: {

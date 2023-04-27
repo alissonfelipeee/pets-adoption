@@ -8,29 +8,23 @@ import {
 } from "../repositories/in-memory";
 import { userExample } from "../utils/global";
 
+const inMemoryUserRepository = new InMemoryUserRepository();
+const inMemoryGetUserByEmailRepository = new InMemoryGetUserByEmailRepository();
+const createUserController = new CreateUserController(
+  inMemoryUserRepository,
+  inMemoryGetUserByEmailRepository
+);
+const authUserService = new AuthUserService(inMemoryGetUserByEmailRepository);
+const authUserController = new AuthUserController(authUserService);
+
 describe("Auth user", () => {
   beforeEach(async () => {
-    const inMemoryUserRepository = new InMemoryUserRepository();
-    const inMemoryGetUserByEmailRepository =
-      new InMemoryGetUserByEmailRepository();
-    const createUserController = new CreateUserController(
-      inMemoryUserRepository,
-      inMemoryGetUserByEmailRepository
-    );
-
     await createUserController.handle({
       body: userExample,
     });
   });
 
   it("should auth user", async () => {
-    const inMemoryGetUserByEmailRepository =
-      new InMemoryGetUserByEmailRepository();
-    const authUserService = new AuthUserService(
-      inMemoryGetUserByEmailRepository
-    );
-    const authUserController = new AuthUserController(authUserService);
-
     const { statusCode } = await authUserController.handle({
       body: {
         email: userExample.email,
@@ -42,13 +36,6 @@ describe("Auth user", () => {
   });
 
   it("should not be able auth user because not exists a body in request", async () => {
-    const inMemoryGetUserByEmailRepository =
-      new InMemoryGetUserByEmailRepository();
-    const authUserService = new AuthUserService(
-      inMemoryGetUserByEmailRepository
-    );
-    const authUserController = new AuthUserController(authUserService);
-
     const { body, statusCode } = await authUserController.handle({});
 
     expect(body).toEqual("Bad Request - Missing body");
@@ -56,13 +43,6 @@ describe("Auth user", () => {
   });
 
   it("should not be able auth user because missing field in body: email", async () => {
-    const inMemoryGetUserByEmailRepository =
-      new InMemoryGetUserByEmailRepository();
-    const authUserService = new AuthUserService(
-      inMemoryGetUserByEmailRepository
-    );
-    const authUserController = new AuthUserController(authUserService);
-
     const { body, statusCode } = await authUserController.handle({
       body: {
         password: userExample.password,
@@ -74,13 +54,6 @@ describe("Auth user", () => {
   });
 
   it("should not be able auth user because missing field in body: password", async () => {
-    const inMemoryGetUserByEmailRepository =
-      new InMemoryGetUserByEmailRepository();
-    const authUserService = new AuthUserService(
-      inMemoryGetUserByEmailRepository
-    );
-    const authUserController = new AuthUserController(authUserService);
-
     const { body, statusCode } = await authUserController.handle({
       body: {
         email: userExample.email,
@@ -92,13 +65,6 @@ describe("Auth user", () => {
   });
 
   it("should not be able auth user because user not exists", async () => {
-    const inMemoryGetUserByEmailRepository =
-      new InMemoryGetUserByEmailRepository();
-    const authUserService = new AuthUserService(
-      inMemoryGetUserByEmailRepository
-    );
-    const authUserController = new AuthUserController(authUserService);
-
     const { body, statusCode } = await authUserController.handle({
       body: {
         email: "johndoe2@gmail.com",
@@ -111,13 +77,6 @@ describe("Auth user", () => {
   });
 
   it("should not be able auth user because password is incorrect", async () => {
-    const inMemoryGetUserByEmailRepository =
-      new InMemoryGetUserByEmailRepository();
-    const authUserService = new AuthUserService(
-      inMemoryGetUserByEmailRepository
-    );
-    const authUserController = new AuthUserController(authUserService);
-
     const { body, statusCode } = await authUserController.handle({
       body: {
         email: userExample.email,
@@ -130,13 +89,6 @@ describe("Auth user", () => {
   });
 
   it("should not be able auth user because occured internal error", async () => {
-    const inMemoryGetUserByEmailRepository =
-      new InMemoryGetUserByEmailRepository();
-    const authUserService = new AuthUserService(
-      inMemoryGetUserByEmailRepository
-    );
-    const authUserController = new AuthUserController(authUserService);
-
     jest
       .spyOn(inMemoryGetUserByEmailRepository, "getUserByEmail")
       .mockImplementationOnce(() => {
