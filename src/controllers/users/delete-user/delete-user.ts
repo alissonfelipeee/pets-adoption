@@ -27,7 +27,7 @@ export class DeleteUserController implements IController {
       const { authorization } = httpRequest.headers;
 
       if (!id) {
-        return badRequest("Missing param: id");
+        return badRequest("Bad Request - Missing param: id");
       }
 
       if (!authorization) {
@@ -37,7 +37,7 @@ export class DeleteUserController implements IController {
       const userExists = await this.getUserByIdService.getUserById(+id);
 
       if (!userExists) {
-        return notFound("User not found");
+        return notFound("Not Found - User not found");
       }
 
       const verifyUserToken = verifyToken(authorization);

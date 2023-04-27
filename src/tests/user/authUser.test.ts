@@ -57,8 +57,9 @@ describe("Auth user", () => {
     );
     const authUserController = new AuthUserController(authUserService);
 
-    const { statusCode } = await authUserController.handle({});
+    const { body, statusCode } = await authUserController.handle({});
 
+    expect(body).toEqual("Bad Request - Missing body");
     expect(statusCode).toBe(400);
   });
 
@@ -70,12 +71,13 @@ describe("Auth user", () => {
     );
     const authUserController = new AuthUserController(authUserService);
 
-    const { statusCode } = await authUserController.handle({
+    const { body, statusCode } = await authUserController.handle({
       body: {
         password: user.password,
       } as AuthUserParams,
     });
 
+    expect(body).toEqual("Bad Request - Missing param: email");
     expect(statusCode).toBe(400);
   });
 
@@ -87,12 +89,13 @@ describe("Auth user", () => {
     );
     const authUserController = new AuthUserController(authUserService);
 
-    const { statusCode } = await authUserController.handle({
+    const { body, statusCode } = await authUserController.handle({
       body: {
         email: user.email,
       } as AuthUserParams,
     });
 
+    expect(body).toEqual("Bad Request - Missing param: password");
     expect(statusCode).toBe(400);
   });
 
@@ -104,13 +107,14 @@ describe("Auth user", () => {
     );
     const authUserController = new AuthUserController(authUserService);
 
-    const { statusCode } = await authUserController.handle({
+    const { body, statusCode } = await authUserController.handle({
       body: {
         email: "johndoe2@gmail.com",
         password: user.password,
       } as AuthUserParams,
     });
 
+    expect(body).toEqual("Unauthorized - Invalid credentials");
     expect(statusCode).toBe(401);
   });
 
@@ -122,13 +126,14 @@ describe("Auth user", () => {
     );
     const authUserController = new AuthUserController(authUserService);
 
-    const { statusCode } = await authUserController.handle({
+    const { body, statusCode } = await authUserController.handle({
       body: {
         email: user.email,
         password: "1234567",
       } as AuthUserParams,
     });
 
+    expect(body).toEqual("Unauthorized - Invalid credentials");
     expect(statusCode).toBe(401);
   });
 

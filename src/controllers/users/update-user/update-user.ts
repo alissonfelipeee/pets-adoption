@@ -16,6 +16,8 @@ export class UpdateUserController implements IController {
 
       const { authorization } = httpRequest.headers;
 
+      const { body } = httpRequest;
+
       if (!id) {
         return badRequest("Bad Request - Missing param: id");
       }
@@ -24,7 +26,7 @@ export class UpdateUserController implements IController {
         return badRequest("Bad Request - Missing header: authorization");
       }
 
-      if (!httpRequest.body) {
+      if (!body) {
         return badRequest("Bad Request - Missing body");
       }
 
@@ -44,7 +46,7 @@ export class UpdateUserController implements IController {
         "password",
         "phone",
       ];
-      const someFieldIsNotAllowedToUpdate = Object.keys(httpRequest.body).some(
+      const someFieldIsNotAllowedToUpdate = Object.keys(body).some(
         (key) => !allowedFieldsToUpdate.includes(key as keyof UpdateUserParams)
       );
 
@@ -52,16 +54,11 @@ export class UpdateUserController implements IController {
         return badRequest("Bad Request - Invalid fields");
       }
 
-      if (httpRequest.body.password) {
-        httpRequest.body.password = await generateHash(
-          httpRequest.body.password
-        );
+      if (body.password) {
+        body.password = await generateHash(body.password);
       }
 
-      const user = await this.updateUserRepository.updateUser(
-        id,
-        httpRequest.body
-      );
+      const user = await this.updateUserRepository.updateUser(id, body);
 
       excludeFieldsUser(user, ["password", "createdAt", "updatedAt"]);
 

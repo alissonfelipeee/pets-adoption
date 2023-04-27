@@ -16,7 +16,9 @@ export class CreateUserController implements IController {
     httpRequest: HttpRequest<CreateUserParams>
   ): Promise<HttpResponse<User | string>> {
     try {
-      if (!httpRequest.body) {
+      const { body } = httpRequest;
+
+      if (!body) {
         return badRequest("Bad Request - Missing body");
       }
 
@@ -29,13 +31,13 @@ export class CreateUserController implements IController {
       ];
 
       for (const field of requiredFields) {
-        if (!httpRequest.body.hasOwnProperty(field)) {
+        if (!body.hasOwnProperty(field)) {
           return badRequest(`Bad Request - Missing field: ${field}`);
         }
       }
 
       for (const field of requiredFields) {
-        if (httpRequest.body[field as keyof CreateUserParams] === "") {
+        if (body[field as keyof CreateUserParams] === "") {
           return badRequest(`Bad Request - Invalid ${field}`);
         }
       }
@@ -47,20 +49,17 @@ export class CreateUserController implements IController {
       }
 
       const emailAlreadyExists =
-        await this.getUserByEmailRepository.getUserByEmail(
-          httpRequest.body.email
-        );
+        await this.getUserByEmailRepository.getUserByEmail(body.email);
 
       if (emailAlreadyExists) {
         return badRequest("Bad Request - Email already exists");
       }
 
       const user = await this.createUserRepository.createUser({
-        ...httpRequest.body,
-        password: await generateHash(httpRequest.body.password),
+        ...body,
+        password: await generateHash(body.password),
       });
 
-      // For some reason that I can't explain, when using the excludeFieldsUser function, the in-memory repository saves users without the password, resulting in multiple test failures, I will check this calmly after finishing the application.
       const { password, createdAt, updatedAt, ...userWithoutPassword } = user;
 
       return created<User>(userWithoutPassword);
