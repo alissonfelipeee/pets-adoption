@@ -7,14 +7,7 @@ import {
   InMemoryGetUserByEmailRepository,
   InMemoryUserRepository,
 } from "../repositories/in-memory";
-
-const user = {
-  firstName: "John",
-  lastName: "Doe",
-  email: "johndoe@gmail.com",
-  password: "123456",
-  phone: "(61) 90000-0000",
-} as User;
+import { userExample } from "../utils/global";
 
 let token: string;
 
@@ -29,7 +22,7 @@ describe("Update User", () => {
     );
 
     await createUserController.handle({
-      body: user,
+      body: userExample,
     });
 
     const authUserService = new AuthUserService(
@@ -37,15 +30,15 @@ describe("Update User", () => {
     );
     const authUserController = new AuthUserController(authUserService);
 
-    const { statusCode, body } = await authUserController.handle({
+    const { body } = await authUserController.handle({
       body: {
-        email: user.email,
-        password: user.password,
+        email: userExample.email,
+        password: userExample.password,
       },
     });
 
-    const newbody = JSON.stringify(body);
-    token = JSON.parse(newbody).token;
+    const bodyinJson = JSON.stringify(body);
+    token = JSON.parse(bodyinJson).token;
   });
 
   it("should update user", async () => {
@@ -103,7 +96,7 @@ describe("Update User", () => {
     expect(statusCode).toBe(200);
   });
 
-  it("should return 400 if id is not provided", async () => {
+  it("should not be able update user because not exists a param: id", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
     const updateUserController = new UpdateUserController(
       inMemoryUserRepository
@@ -119,11 +112,11 @@ describe("Update User", () => {
       },
     });
 
-    expect(body).toBe("Bad Request - Missing param: id");
+    expect(body).toEqual("Bad Request - Missing param: id");
     expect(statusCode).toBe(400);
   });
 
-  it("should return error because missing authorization", async () => {
+  it("should not be able update user because not exists a header: authorization", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
     const updateUserController = new UpdateUserController(
       inMemoryUserRepository
@@ -139,11 +132,11 @@ describe("Update User", () => {
       headers: {},
     });
 
-    expect(body).toBe("Bad Request - Missing header: authorization");
+    expect(body).toEqual("Bad Request - Missing header: authorization");
     expect(statusCode).toBe(400);
   });
 
-  it("should return 400 if body is not provided", async () => {
+  it("should not be able update user because not exists a body in request", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
     const updateUserController = new UpdateUserController(
       inMemoryUserRepository
@@ -158,11 +151,11 @@ describe("Update User", () => {
       },
     });
 
-    expect(body).toBe("Bad Request - Missing body");
+    expect(body).toEqual("Bad Request - Missing body");
     expect(statusCode).toBe(400);
   });
 
-  it("should return error because token is invalid", async () => {
+  it("should not be able update user because token is invalid", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
     const updateUserController = new UpdateUserController(
       inMemoryUserRepository
@@ -180,17 +173,17 @@ describe("Update User", () => {
       },
     });
 
-    expect(body).toBe("Unauthorized - Invalid token");
+    expect(body).toEqual("Unauthorized - Invalid token");
     expect(statusCode).toBe(401);
   });
 
-  it("should return error because token invalid for this user", async () => {
+  it("should not be able update user because token not belongs to this user", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
     const updateUserController = new UpdateUserController(
       inMemoryUserRepository
     );
 
-    await inMemoryUserRepository.createUser(user);
+    await inMemoryUserRepository.createUser(userExample);
 
     const { statusCode, body } = await updateUserController.handle({
       params: {
@@ -204,15 +197,15 @@ describe("Update User", () => {
       },
     });
 
-    expect(body).toBe("Unauthorized - Invalid token for this user");
+    expect(body).toEqual("Unauthorized - Invalid token for this user");
     expect(statusCode).toBe(401);
   });
 
-  it("should return 400 if there are invalid fields", async () => {
+  it("should not be able update user because invalid fields were received", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
     const updateUserController = new UpdateUserController(
       inMemoryUserRepository
-    ) as any; // I found no other solution to perform this test other than changing the controller type to ANY, so that the error occurs!
+    );
 
     const { statusCode, body } = await updateUserController.handle({
       params: {
@@ -220,17 +213,17 @@ describe("Update User", () => {
       },
       body: {
         email: "johndoe2@gmail.com",
-      },
+      } as User,
       headers: {
         authorization: `Bearer ${token}`,
       },
     });
 
-    expect(body).toBe("Bad Request - Invalid fields");
+    expect(body).toEqual("Bad Request - Invalid fields");
     expect(statusCode).toBe(400);
   });
 
-  it("should return 500 if something goes wrong", async () => {
+  it("should not be able update user because occured internal error", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
     const updateUserController = new UpdateUserController(
       inMemoryUserRepository
@@ -251,7 +244,7 @@ describe("Update User", () => {
       },
     });
 
-    expect(user.body).toBe("Internal Server Error");
+    expect(user.body).toEqual("Internal Server Error");
     expect(user.statusCode).toBe(500);
   });
 });

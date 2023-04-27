@@ -32,7 +32,7 @@ export class UpdatePetAdopterController implements IController {
       }
 
       if (!authorization) {
-        return unauthorized("Unauthorized - Missing header: authorization");
+        return badRequest("Bad Request - Missing header: authorization");
       }
 
       const petExists = await this.getPetByIdRepository.getPetById(+id);

@@ -15,7 +15,7 @@ export class GetPetByIdController implements IController {
       const { id } = httpRequest.params;
 
       if (!id) {
-        return badRequest("Missing param: id");
+        return badRequest("Bad Request - Missing param: id");
       }
 
       const pet = await this.getPetByIdRepository.getPetById(+id);

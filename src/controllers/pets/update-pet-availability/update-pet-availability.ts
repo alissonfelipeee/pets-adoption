@@ -30,7 +30,7 @@ export class UpdatePetAvailabilityController implements IController {
       }
 
       if (!authorization) {
-        return unauthorized("Unauthorized - Missing header: authorization");
+        return badRequest("Bad Request - Missing header: authorization");
       }
 
       const petExists = await this.getPetByIdRepository.getPetById(+id);
@@ -50,7 +50,7 @@ export class UpdatePetAvailabilityController implements IController {
       }
 
       const pet =
-        await this.UpdatePetAvailabilityRepository.updatePetAvailability(id);
+        await this.UpdatePetAvailabilityRepository.updatePetAvailability(+id);
 
       excludeFieldsUser(pet.owner, ["password", "createdAt", "updatedAt"]);
 

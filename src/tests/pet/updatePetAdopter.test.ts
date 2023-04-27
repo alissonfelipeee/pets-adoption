@@ -1,10 +1,7 @@
 import { CreatePetController } from "../../controllers/pets/create-pets/create-pets";
 import { UpdatePetAdopterController } from "../../controllers/pets/update-pet-adopter/update-pet-adopter";
-import { UpdatePetAvailabilityController } from "../../controllers/pets/update-pet-availability/update-pet-availability";
 import { AuthUserController } from "../../controllers/users/auth-user/auth-user";
 import { CreateUserController } from "../../controllers/users/create-user/create-user";
-import { Pet } from "../../models/Pet";
-import { User } from "../../models/User";
 import { AuthUserService } from "../../services/auth-user/auth-user";
 import {
   InMemoryGetPetByIdRepository,
@@ -13,24 +10,7 @@ import {
   InMemoryPetRepository,
   InMemoryUserRepository,
 } from "../repositories/in-memory";
-
-const user = {
-  id: 1,
-  firstName: "John",
-  lastName: "Doe",
-  email: "johndoe@gmail.com",
-  password: "123456",
-  phone: "(61) 90000-0000",
-} as User;
-
-const pet = {
-  id: 1,
-  name: "Dog",
-  age: 1,
-  breed: "Pitbull",
-  owner: user,
-  available: true,
-} as Pet;
+import { petExample, userExample } from "../utils/global";
 
 let token: string;
 let token2: string;
@@ -48,7 +28,7 @@ describe("Update Pet Adopter", () => {
     // create user
 
     await createUserController.handle({
-      body: user,
+      body: userExample,
     });
 
     const authUserService = new AuthUserService(
@@ -60,13 +40,13 @@ describe("Update Pet Adopter", () => {
 
     const { body } = await authUserController.handle({
       body: {
-        email: user.email,
-        password: user.password,
+        email: userExample.email,
+        password: userExample.password,
       },
     });
 
-    const newbody = JSON.stringify(body);
-    token = JSON.parse(newbody).token;
+    const bodyinJson = JSON.stringify(body);
+    token = JSON.parse(bodyinJson).token;
 
     // create pet
 
@@ -78,7 +58,7 @@ describe("Update Pet Adopter", () => {
     );
 
     await createPetController.handle({
-      body: pet,
+      body: petExample,
       headers: {
         authorization: `Bearer ${token}`,
       },
@@ -88,7 +68,7 @@ describe("Update Pet Adopter", () => {
 
     await createUserController.handle({
       body: {
-        ...user,
+        ...userExample,
         email: "johndoe2@gmail.com",
       },
     });
@@ -98,17 +78,17 @@ describe("Update Pet Adopter", () => {
     const response = await authUserController.handle({
       body: {
         email: "johndoe2@gmail.com",
-        password: user.password,
+        password: userExample.password,
       },
     });
 
-    const newbody2 = JSON.stringify(response.body);
-    token2 = JSON.parse(newbody2).token;
+    const bodyinJsonAnotherUser = JSON.stringify(response.body);
+    token2 = JSON.parse(bodyinJsonAnotherUser).token;
 
     // create another pet that owner is the first user
 
     await createPetController.handle({
-      body: pet,
+      body: petExample,
       headers: {
         authorization: `Bearer ${token}`,
       },
@@ -138,7 +118,7 @@ describe("Update Pet Adopter", () => {
     expect(statusCode).toBe(200);
   });
 
-  it("should not be able to adopt a pet because missing param id", async () => {
+  it("should not be able to adopt a pet because missing param: id", async () => {
     const inMemoryPetRepository = new InMemoryPetRepository();
     const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
     const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
@@ -155,11 +135,11 @@ describe("Update Pet Adopter", () => {
       },
     });
 
-    expect(body).toBe("Bad Request - Missing param: id");
+    expect(body).toEqual("Bad Request - Missing param: id");
     expect(statusCode).toBe(400);
   });
 
-  it("should not be able to adopt a pet because missing header authorization", async () => {
+  it("should not be able to adopt a pet because missing header: authorization", async () => {
     const inMemoryPetRepository = new InMemoryPetRepository();
     const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
     const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
@@ -176,8 +156,8 @@ describe("Update Pet Adopter", () => {
       headers: {},
     });
 
-    expect(body).toBe("Unauthorized - Missing header: authorization");
-    expect(statusCode).toBe(401);
+    expect(body).toEqual("Bad Request - Missing header: authorization");
+    expect(statusCode).toBe(400);
   });
 
   it("should not be able to adopt a pet because pet not exists", async () => {
@@ -199,7 +179,7 @@ describe("Update Pet Adopter", () => {
       },
     });
 
-    expect(body).toBe("Not found - Pet not found");
+    expect(body).toEqual("Not found - Pet not found");
     expect(statusCode).toBe(404);
   });
 
@@ -249,7 +229,7 @@ describe("Update Pet Adopter", () => {
     expect(statusCode).toBe(401);
   });
 
-  it("should not be able to adopt a pet because that user owns the pet", async () => {
+  it("should not be able update pet adopter because token not belongs to this user", async () => {
     const inMemoryPetRepository = new InMemoryPetRepository();
     const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
     const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
@@ -272,7 +252,7 @@ describe("Update Pet Adopter", () => {
     expect(statusCode).toBe(400);
   });
 
-  it("should not be able to update pet adopter because internal server error", async () => {
+  it("should not be able update pet adopter because occured internal error", async () => {
     const inMemoryPetRepository = new InMemoryPetRepository();
     const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
     const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
@@ -297,7 +277,7 @@ describe("Update Pet Adopter", () => {
       },
     });
 
-    expect(body).toBe("Internal Server Error");
+    expect(body).toEqual("Internal Server Error");
     expect(statusCode).toBe(500);
   });
 });

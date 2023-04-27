@@ -1,6 +1,5 @@
 import { AuthUserController } from "../../controllers/users/auth-user/auth-user";
 import { CreateUserController } from "../../controllers/users/create-user/create-user";
-import { User } from "../../models/User";
 import { AuthUserService } from "../../services/auth-user/auth-user";
 import {
   InMemoryGetPetByIdRepository,
@@ -9,27 +8,9 @@ import {
   InMemoryPetRepository,
   InMemoryUserRepository,
 } from "../repositories/in-memory";
-import { Pet } from "../../models/Pet";
 import { CreatePetController } from "../../controllers/pets/create-pets/create-pets";
 import { DeletePetController } from "../../controllers/pets/delete-pet/delete-pet";
-
-const user = {
-  id: 1,
-  firstName: "John",
-  lastName: "Doe",
-  email: "johndoe@gmail.com",
-  password: "123456",
-  phone: "(61) 90000-0000",
-} as User;
-
-const pet = {
-  id: 1,
-  name: "Dog",
-  age: 1,
-  breed: "Pitbull",
-  owner: user,
-  available: true,
-} as Pet;
+import { petExample, userExample } from "../utils/global";
 
 let token: string;
 
@@ -46,7 +27,7 @@ describe("Delete Pet", () => {
     // create user
 
     await createUserController.handle({
-      body: user,
+      body: userExample,
     });
 
     const authUserService = new AuthUserService(
@@ -58,13 +39,13 @@ describe("Delete Pet", () => {
 
     const { body } = await authUserController.handle({
       body: {
-        email: user.email,
-        password: user.password,
+        email: userExample.email,
+        password: userExample.password,
       },
     });
 
-    const newbody = JSON.stringify(body);
-    token = JSON.parse(newbody).token;
+    const bodyinJson = JSON.stringify(body);
+    token = JSON.parse(bodyinJson).token;
 
     // create pet
 
@@ -76,7 +57,7 @@ describe("Delete Pet", () => {
     );
 
     await createPetController.handle({
-      body: pet,
+      body: petExample,
       headers: {
         authorization: `Bearer ${token}`,
       },
@@ -100,11 +81,11 @@ describe("Delete Pet", () => {
       },
     });
 
-    expect(body).toEqual(pet);
+    expect(body).toEqual(petExample);
     expect(statusCode).toBe(200);
   });
 
-  it("should not delete pet because missing param id", async () => {
+  it("should not be able delete pet because not exists a param: id", async () => {
     const inMemoryPetRepository = new InMemoryPetRepository();
     const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
     const deletePetController = new DeletePetController(
@@ -123,7 +104,7 @@ describe("Delete Pet", () => {
     expect(statusCode).toBe(400);
   });
 
-  it("should not delete pet because missing header authorization", async () => {
+  it("should not be able delete pet because not exists a header: authorization", async () => {
     const inMemoryPetRepository = new InMemoryPetRepository();
     const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
     const deletePetController = new DeletePetController(
@@ -142,7 +123,7 @@ describe("Delete Pet", () => {
     expect(statusCode).toBe(400);
   });
 
-  it("should not delete because pet not exists", async () => {
+  it("should not be able delete pet because pet not exists", async () => {
     const inMemoryPetRepository = new InMemoryPetRepository();
     const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
     const deletePetController = new DeletePetController(
@@ -163,7 +144,7 @@ describe("Delete Pet", () => {
     expect(statusCode).toBe(404);
   });
 
-  it("should not delete pet because token is invalid", async () => {
+  it("should not be able delete pet because token is invalid", async () => {
     const inMemoryPetRepository = new InMemoryPetRepository();
     const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
     const deletePetController = new DeletePetController(
@@ -171,7 +152,7 @@ describe("Delete Pet", () => {
       inMemoryGetPetByIdRepository
     );
 
-    await inMemoryPetRepository.createPet(pet);
+    await inMemoryPetRepository.createPet(petExample);
 
     const { body, statusCode } = await deletePetController.handle({
       params: {
@@ -186,7 +167,7 @@ describe("Delete Pet", () => {
     expect(statusCode).toBe(401);
   });
 
-  it("should not delete pet because token is not from the pet's creator", async () => {
+  it("should not be able delete pet because token not belongs to this user", async () => {
     const inMemoryPetRepository = new InMemoryPetRepository();
     const inMemoryUserRepository = new InMemoryUserRepository();
     const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
@@ -196,12 +177,12 @@ describe("Delete Pet", () => {
     );
 
     const responseCreatePet = await inMemoryUserRepository.createUser({
-      ...user,
+      ...userExample,
       email: "johndoe2@gmail.com",
     });
 
     await inMemoryPetRepository.createPet({
-      ...pet,
+      ...petExample,
       owner: responseCreatePet,
     });
 
@@ -218,7 +199,7 @@ describe("Delete Pet", () => {
     expect(statusCode).toBe(401);
   });
 
-  it("should not delete pet because occurred an internal error", async () => {
+  it("should not be able delete pet because occured internal error", async () => {
     const inMemoryPetRepository = new InMemoryPetRepository();
     const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
     const deletePetController = new DeletePetController(

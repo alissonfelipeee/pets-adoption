@@ -25,19 +25,21 @@ export class UpdatePetController implements IController {
 
       const { authorization } = httpRequest.headers;
 
+      const { body } = httpRequest;
+
       if (!id) {
         return badRequest("Bad Request - Missing param: id");
       }
 
       if (!authorization) {
-        return unauthorized("Unauthorized - Missing header: authorization");
+        return badRequest("Bad Request - Missing header: authorization");
       }
 
-      if (!httpRequest.body) {
+      if (!body) {
         return badRequest("Bad Request - Missing body");
       }
 
-      if(Object.keys(httpRequest.body).length === 0) {
+      if (Object.keys(body).length === 0) {
         return badRequest("Bad Request - Empty body");
       }
 
@@ -63,7 +65,7 @@ export class UpdatePetController implements IController {
         "breed",
         "available",
       ];
-      const someFieldIsNotAllowedToUpdate = Object.keys(httpRequest.body).some(
+      const someFieldIsNotAllowedToUpdate = Object.keys(body).some(
         (key) => !allowedFieldsToUpdate.includes(key as keyof UpdatePetParams)
       );
 
@@ -71,10 +73,7 @@ export class UpdatePetController implements IController {
         return badRequest("Bad Request - Invalid fields");
       }
 
-      const pet = await this.updatePetRepository.updatePet(
-        id,
-        httpRequest.body
-      );
+      const pet = await this.updatePetRepository.updatePet(+id, body);
 
       excludeFieldsUser(pet.owner, ["password", "createdAt", "updatedAt"]);
 

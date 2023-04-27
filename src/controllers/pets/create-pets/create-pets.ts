@@ -18,7 +18,9 @@ export class CreatePetController implements IController {
     try {
       const { authorization } = httpRequest.headers;
 
-      if (!httpRequest.body) {
+      const { body } = httpRequest;
+
+      if (!body) {
         return badRequest("Bad Request - Missing body");
       }
 
@@ -29,13 +31,13 @@ export class CreatePetController implements IController {
       const requiredFields = ["name", "age", "breed"];
 
       for (const field of requiredFields) {
-        if (!httpRequest.body.hasOwnProperty(field)) {
+        if (!body.hasOwnProperty(field)) {
           return badRequest(`Bad Request - Missing field: ${field}`);
         }
       }
 
       for (const field of requiredFields) {
-        if (httpRequest.body[field as keyof CreatePetsParams] === "") {
+        if (body[field as keyof CreatePetsParams] === "") {
           return badRequest(`Bad Request - Invalid field: ${field}`);
         }
       }
@@ -54,10 +56,10 @@ export class CreatePetController implements IController {
         return badRequest("Bad Request - User not found");
       }
 
-      httpRequest.body.owner = owner;
+      body.owner = owner;
 
       const pet = await this.createPetRepository.createPet({
-        ...httpRequest.body,
+        ...body,
       });
 
       excludeFieldsUser(pet.owner, ["password", "createdAt", "updatedAt"]);

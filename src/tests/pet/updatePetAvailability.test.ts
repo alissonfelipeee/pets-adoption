@@ -2,8 +2,6 @@ import { CreatePetController } from "../../controllers/pets/create-pets/create-p
 import { UpdatePetAvailabilityController } from "../../controllers/pets/update-pet-availability/update-pet-availability";
 import { AuthUserController } from "../../controllers/users/auth-user/auth-user";
 import { CreateUserController } from "../../controllers/users/create-user/create-user";
-import { Pet } from "../../models/Pet";
-import { User } from "../../models/User";
 import { AuthUserService } from "../../services/auth-user/auth-user";
 import {
   InMemoryGetPetByIdRepository,
@@ -12,24 +10,7 @@ import {
   InMemoryPetRepository,
   InMemoryUserRepository,
 } from "../repositories/in-memory";
-
-const user = {
-  id: 1,
-  firstName: "John",
-  lastName: "Doe",
-  email: "johndoe@gmail.com",
-  password: "123456",
-  phone: "(61) 90000-0000",
-} as User;
-
-const pet = {
-  id: 1,
-  name: "Dog",
-  age: 1,
-  breed: "Pitbull",
-  owner: user,
-  available: true,
-} as Pet;
+import { petExample, userExample } from "../utils/global";
 
 let token: string;
 
@@ -46,7 +27,7 @@ describe("Update Pet Availability", () => {
     // create user
 
     await createUserController.handle({
-      body: user,
+      body: userExample,
     });
 
     const authUserService = new AuthUserService(
@@ -58,13 +39,13 @@ describe("Update Pet Availability", () => {
 
     const { body } = await authUserController.handle({
       body: {
-        email: user.email,
-        password: user.password,
+        email: userExample.email,
+        password: userExample.password,
       },
     });
 
-    const newbody = JSON.stringify(body);
-    token = JSON.parse(newbody).token;
+    const bodyinJson = JSON.stringify(body);
+    token = JSON.parse(bodyinJson).token;
 
     // create pet
 
@@ -76,7 +57,7 @@ describe("Update Pet Availability", () => {
     );
 
     await createPetController.handle({
-      body: pet,
+      body: petExample,
       headers: {
         authorization: `Bearer ${token}`,
       },
@@ -101,13 +82,13 @@ describe("Update Pet Availability", () => {
     });
 
     expect(body).toEqual({
-      ...pet,
+      ...petExample,
       available: false,
     });
     expect(statusCode).toBe(200);
   });
 
-  it("should not be able to update pet availability because missing param id", async () => {
+  it("should not be able to update pet availability because missing param: id", async () => {
     const inMemoryPetRepository = new InMemoryPetRepository();
     const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
     const updatePetAvailabilityController = new UpdatePetAvailabilityController(
@@ -122,11 +103,11 @@ describe("Update Pet Availability", () => {
       },
     });
 
-    expect(body).toBe("Bad Request - Missing param: id");
+    expect(body).toEqual("Bad Request - Missing param: id");
     expect(statusCode).toBe(400);
   });
 
-  it("should not be able to update pet availability because missing header authorization", async () => {
+  it("should not be able to update pet availability because missing header: authorization", async () => {
     const inMemoryPetRepository = new InMemoryPetRepository();
     const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
     const updatePetAvailabilityController = new UpdatePetAvailabilityController(
@@ -141,8 +122,8 @@ describe("Update Pet Availability", () => {
       headers: {},
     });
 
-    expect(body).toBe("Unauthorized - Missing header: authorization");
-    expect(statusCode).toBe(401);
+    expect(body).toEqual("Bad Request - Missing header: authorization");
+    expect(statusCode).toBe(400);
   });
 
   it("should not be able to update pet availability because pet not exists", async () => {
@@ -162,7 +143,7 @@ describe("Update Pet Availability", () => {
       },
     });
 
-    expect(body).toBe("Not found - Pet not found");
+    expect(body).toEqual("Not found - Pet not found");
     expect(statusCode).toBe(404);
   });
 
@@ -183,11 +164,11 @@ describe("Update Pet Availability", () => {
       },
     });
 
-    expect(body).toBe("Unauthorized - Invalid token");
+    expect(body).toEqual("Unauthorized - Invalid token");
     expect(statusCode).toBe(401);
   });
 
-  it("should not be able to update pet availability because pet is another user", async () => {
+  it("should not be able update pet availability because token not belongs to this user", async () => {
     const inMemoryPetRepository = new InMemoryPetRepository();
     const inMemoryUserRepository = new InMemoryUserRepository();
     const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
@@ -197,12 +178,12 @@ describe("Update Pet Availability", () => {
     );
 
     const responseCreatePet = await inMemoryUserRepository.createUser({
-      ...user,
+      ...userExample,
       email: "johndoe2@gmail.com",
     });
 
     await inMemoryPetRepository.createPet({
-      ...pet,
+      ...petExample,
       owner: responseCreatePet,
     });
 
@@ -215,11 +196,11 @@ describe("Update Pet Availability", () => {
       },
     });
 
-    expect(body).toBe("Unauthorized - Invalid token for this user");
+    expect(body).toEqual("Unauthorized - Invalid token for this user");
     expect(statusCode).toBe(401);
   });
 
-  it("should not be able to update pet availability because internal server error", async () => {
+  it("should not be able update pet availability because occured internal error", async () => {
     const inMemoryPetRepository = new InMemoryPetRepository();
     const inMemoryGetPetByIdRepository = new InMemoryGetPetByIdRepository();
     const updatePetAvailabilityController = new UpdatePetAvailabilityController(
@@ -242,7 +223,7 @@ describe("Update Pet Availability", () => {
       },
     });
 
-    expect(body).toBe("Internal Server Error");
+    expect(body).toEqual("Internal Server Error");
     expect(statusCode).toBe(500);
   });
 });

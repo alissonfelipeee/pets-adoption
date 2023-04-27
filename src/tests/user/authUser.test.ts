@@ -1,20 +1,12 @@
 import { AuthUserController } from "../../controllers/users/auth-user/auth-user";
 import { AuthUserParams } from "../../controllers/users/auth-user/protocols";
 import { CreateUserController } from "../../controllers/users/create-user/create-user";
-import { User } from "../../models/User";
 import { AuthUserService } from "../../services/auth-user/auth-user";
 import {
   InMemoryGetUserByEmailRepository,
   InMemoryUserRepository,
 } from "../repositories/in-memory";
-
-const user = {
-  firstName: "John",
-  lastName: "Doe",
-  email: "johndoe@gmail.com",
-  password: "123456",
-  phone: "(61) 90000-0000",
-} as User;
+import { userExample } from "../utils/global";
 
 describe("Auth user", () => {
   beforeEach(async () => {
@@ -27,7 +19,7 @@ describe("Auth user", () => {
     );
 
     await createUserController.handle({
-      body: user,
+      body: userExample,
     });
   });
 
@@ -41,15 +33,15 @@ describe("Auth user", () => {
 
     const { statusCode } = await authUserController.handle({
       body: {
-        email: user.email,
-        password: user.password,
+        email: userExample.email,
+        password: userExample.password,
       },
     });
 
     expect(statusCode).toBe(200);
   });
 
-  it("should not auth user because not exists a body", async () => {
+  it("should not be able auth user because not exists a body in request", async () => {
     const inMemoryGetUserByEmailRepository =
       new InMemoryGetUserByEmailRepository();
     const authUserService = new AuthUserService(
@@ -63,7 +55,7 @@ describe("Auth user", () => {
     expect(statusCode).toBe(400);
   });
 
-  it("should not auth user because not exists a email", async () => {
+  it("should not be able auth user because missing field in body: email", async () => {
     const inMemoryGetUserByEmailRepository =
       new InMemoryGetUserByEmailRepository();
     const authUserService = new AuthUserService(
@@ -73,7 +65,7 @@ describe("Auth user", () => {
 
     const { body, statusCode } = await authUserController.handle({
       body: {
-        password: user.password,
+        password: userExample.password,
       } as AuthUserParams,
     });
 
@@ -81,7 +73,7 @@ describe("Auth user", () => {
     expect(statusCode).toBe(400);
   });
 
-  it("should not auth user because not exists a password", async () => {
+  it("should not be able auth user because missing field in body: password", async () => {
     const inMemoryGetUserByEmailRepository =
       new InMemoryGetUserByEmailRepository();
     const authUserService = new AuthUserService(
@@ -91,7 +83,7 @@ describe("Auth user", () => {
 
     const { body, statusCode } = await authUserController.handle({
       body: {
-        email: user.email,
+        email: userExample.email,
       } as AuthUserParams,
     });
 
@@ -99,7 +91,7 @@ describe("Auth user", () => {
     expect(statusCode).toBe(400);
   });
 
-  it("should not auth user because not exists a user", async () => {
+  it("should not be able auth user because user not exists", async () => {
     const inMemoryGetUserByEmailRepository =
       new InMemoryGetUserByEmailRepository();
     const authUserService = new AuthUserService(
@@ -110,15 +102,15 @@ describe("Auth user", () => {
     const { body, statusCode } = await authUserController.handle({
       body: {
         email: "johndoe2@gmail.com",
-        password: user.password,
-      } as AuthUserParams,
+        password: userExample.password,
+      },
     });
 
     expect(body).toEqual("Unauthorized - Invalid credentials");
     expect(statusCode).toBe(401);
   });
 
-  it("should not auth user because password is incorrect", async () => {
+  it("should not be able auth user because password is incorrect", async () => {
     const inMemoryGetUserByEmailRepository =
       new InMemoryGetUserByEmailRepository();
     const authUserService = new AuthUserService(
@@ -128,16 +120,16 @@ describe("Auth user", () => {
 
     const { body, statusCode } = await authUserController.handle({
       body: {
-        email: user.email,
+        email: userExample.email,
         password: "1234567",
-      } as AuthUserParams,
+      },
     });
 
     expect(body).toEqual("Unauthorized - Invalid credentials");
     expect(statusCode).toBe(401);
   });
 
-  it("should return 500 if something goes wrong", async () => {
+  it("should not be able auth user because occured internal error", async () => {
     const inMemoryGetUserByEmailRepository =
       new InMemoryGetUserByEmailRepository();
     const authUserService = new AuthUserService(
@@ -151,13 +143,14 @@ describe("Auth user", () => {
         throw new Error();
       });
 
-    const { statusCode } = await authUserController.handle({
+    const { body, statusCode } = await authUserController.handle({
       body: {
-        email: user.email,
-        password: user.password,
-      } as AuthUserParams,
+        email: userExample.email,
+        password: userExample.password,
+      },
     });
 
+    expect(body).toEqual("Internal Server Error");
     expect(statusCode).toBe(500);
   });
 });

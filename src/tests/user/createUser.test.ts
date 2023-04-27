@@ -4,14 +4,7 @@ import {
   InMemoryGetUserByEmailRepository,
   InMemoryUserRepository,
 } from "../repositories/in-memory";
-
-const user = {
-  firstName: "John",
-  lastName: "Doe",
-  email: "johndoe@gmail.com",
-  password: "123456",
-  phone: "(61) 90000-0000",
-} as User;
+import { userExample } from "../utils/global";
 
 const userWithoutFirstName = {
   lastName: "Doe",
@@ -31,7 +24,7 @@ describe("Create user", () => {
     );
 
     const { body, statusCode } = await createUserController.handle({
-      body: user,
+      body: userExample,
     });
 
     const { password, ...userWithoutPassword } = body as User;
@@ -43,7 +36,7 @@ describe("Create user", () => {
     expect(statusCode).toBe(201);
   });
 
-  it("should not be able create user because not exists a body", async () => {
+  it("should not be able create user because not exists a body in request", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
     const inMemoryGetUserByEmailRepository =
       new InMemoryGetUserByEmailRepository();
@@ -58,7 +51,7 @@ describe("Create user", () => {
     expect(statusCode).toBe(400);
   });
 
-  it("should not be able to create a user because firstName is missing", async () => {
+  it("should not be able create user because missing field in body: firstName", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
     const inMemoryGetUserByEmailRepository =
       new InMemoryGetUserByEmailRepository();
@@ -75,7 +68,7 @@ describe("Create user", () => {
     expect(statusCode).toBe(400);
   });
 
-  it("should not be able to create a user because firstName is empty", async () => {
+  it("should not be able create user because field empty in body: firstName", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
     const inMemoryGetUserByEmailRepository =
       new InMemoryGetUserByEmailRepository();
@@ -85,14 +78,14 @@ describe("Create user", () => {
     );
 
     const { body, statusCode } = await createUserController.handle({
-      body: { ...user, firstName: "" },
+      body: { ...userExample, firstName: "" },
     });
 
     expect(body).toEqual("Bad Request - Invalid firstName");
     expect(statusCode).toBe(400);
   });
 
-  it("should not be able to create a user because email is invalid", async () => {
+  it("should not be able create user because email is invalid", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
     const inMemoryGetUserByEmailRepository =
       new InMemoryGetUserByEmailRepository();
@@ -102,14 +95,14 @@ describe("Create user", () => {
     );
 
     const { body, statusCode } = await createUserController.handle({
-      body: { ...user, email: "johndoe" },
+      body: { ...userExample, email: "johndoe" },
     });
 
     expect(body).toEqual("Bad Request - Invalid email");
     expect(statusCode).toBe(400);
   });
 
-  it("should not be able to create a user because email already exists", async () => {
+  it("should not be able create user because email already exists", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
     const inMemoryGetUserByEmailRepository =
       new InMemoryGetUserByEmailRepository();
@@ -119,18 +112,18 @@ describe("Create user", () => {
     );
 
     await createUserController.handle({
-      body: user,
+      body: userExample,
     });
 
     const { body, statusCode } = await createUserController.handle({
-      body: user,
+      body: userExample,
     });
 
     expect(body).toEqual("Bad Request - Email already exists");
     expect(statusCode).toBe(400);
   });
 
-  it("should return 500 if something goes wrong", async () => {
+  it("should not be able create user because occurred internal error", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
     const inMemoryGetUserByEmailRepository =
       new InMemoryGetUserByEmailRepository();
@@ -146,7 +139,7 @@ describe("Create user", () => {
       });
 
     const { body, statusCode } = await createUserController.handle({
-      body: { ...user, email: "johndoe2@gmail.com" },
+      body: { ...userExample, email: "johndoe2@gmail.com" },
     });
 
     expect(body).toEqual("Internal Server Error");

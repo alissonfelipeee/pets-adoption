@@ -1,9 +1,8 @@
+import { petExample, userExample } from './../utils/global';
 import { CreatePetController } from "../../controllers/pets/create-pets/create-pets";
 import { GetPetsController } from "../../controllers/pets/get-pets/get-pets";
 import { AuthUserController } from "../../controllers/users/auth-user/auth-user";
 import { CreateUserController } from "../../controllers/users/create-user/create-user";
-import { Pet } from "../../models/Pet";
-import { User } from "../../models/User";
 import { AuthUserService } from "../../services/auth-user/auth-user";
 import {
   InMemoryGetUserByEmailRepository,
@@ -11,24 +10,6 @@ import {
   InMemoryPetRepository,
   InMemoryUserRepository,
 } from "../repositories/in-memory";
-
-const user = {
-  id: 1,
-  firstName: "John",
-  lastName: "Doe",
-  email: "johndoe@gmail.com",
-  password: "123456",
-  phone: "(61) 90000-0000",
-} as User;
-
-const pet = {
-  id: 1,
-  name: "Dog",
-  age: 1,
-  breed: "Pitbull",
-  owner: user,
-  available: true,
-} as Pet;
 
 let token: string;
 
@@ -43,7 +24,7 @@ describe("Get pets", () => {
     );
 
     await createUserController.handle({
-      body: user,
+      body: userExample,
     });
 
     const authUserService = new AuthUserService(
@@ -53,13 +34,13 @@ describe("Get pets", () => {
 
     const { body } = await authUserController.handle({
       body: {
-        email: user.email,
-        password: user.password,
+        email: userExample.email,
+        password: userExample.password,
       },
     });
 
-    const newbody = JSON.stringify(body);
-    token = JSON.parse(newbody).token;
+    const bodyinJson = JSON.stringify(body);
+    token = JSON.parse(bodyinJson).token;
   });
 
   it("should return a empty list of pets", async () => {
@@ -83,7 +64,7 @@ describe("Get pets", () => {
     );
 
     await createPetController.handle({
-      body: pet,
+      body: petExample,
       headers: {
         authorization: `Bearer ${token}`,
       },
@@ -91,11 +72,11 @@ describe("Get pets", () => {
 
     const { body, statusCode } = await getPetsController.handle();
 
-    expect(body).toEqual([pet]);
+    expect(body).toEqual([petExample]);
     expect(statusCode).toBe(200);
   });
 
-  it("should return 500 if something goes wrong", async () => {
+  it("should not be able get all pets because occured internal error", async () => {
     const inMemoryPetRepository = new InMemoryPetRepository();
     const getPetsController = new GetPetsController(inMemoryPetRepository);
 
@@ -105,7 +86,7 @@ describe("Get pets", () => {
 
     const { body, statusCode } = await getPetsController.handle();
 
-    expect(body).toBe("Internal Server Error");
+    expect(body).toEqual("Internal Server Error");
     expect(statusCode).toBe(500);
   });
 });

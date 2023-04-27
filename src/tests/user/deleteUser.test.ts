@@ -8,14 +8,7 @@ import {
   InMemoryGetUserByIdRepository,
   InMemoryUserRepository,
 } from "../repositories/in-memory";
-
-const user = {
-  firstName: "John",
-  lastName: "Doe",
-  email: "johndoe@gmail.com",
-  password: "123456",
-  phone: "(61) 90000-0000",
-} as User;
+import { userExample } from "../utils/global";
 
 let token: string;
 
@@ -30,7 +23,7 @@ describe("Delete User", () => {
     );
 
     await createUserController.handle({
-      body: user,
+      body: userExample,
     });
 
     const authUserService = new AuthUserService(
@@ -38,15 +31,15 @@ describe("Delete User", () => {
     );
     const authUserController = new AuthUserController(authUserService);
 
-    const { statusCode, body } = await authUserController.handle({
+    const { body } = await authUserController.handle({
       body: {
-        email: user.email,
-        password: user.password,
+        email: userExample.email,
+        password: userExample.password,
       },
     });
 
-    const newbody = JSON.stringify(body);
-    token = JSON.parse(newbody).token;
+    const bodyinJson = JSON.stringify(body);
+    token = JSON.parse(bodyinJson).token;
   });
 
   it("should delete user", async () => {
@@ -72,7 +65,7 @@ describe("Delete User", () => {
     expect(statusCode).toBe(200);
   });
 
-  it("should return error because id params not exists", async () => {
+  it("should not be able delete user because not exists a param: id", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
     const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
     const deleteUserController = new DeleteUserController(
@@ -91,7 +84,7 @@ describe("Delete User", () => {
     expect(statusCode).toBe(400);
   });
 
-  it("should return error because missing authorization", async () => {
+  it("should not be able delete user because not exists a header: authorization", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
     const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
     const deleteUserController = new DeleteUserController(
@@ -110,7 +103,7 @@ describe("Delete User", () => {
     expect(statusCode).toBe(400);
   });
 
-  it("should return error because user not exists", async () => {
+  it("should not be able delete user because user not exists", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
     const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
     const deleteUserController = new DeleteUserController(
@@ -131,7 +124,7 @@ describe("Delete User", () => {
     expect(statusCode).toBe(404);
   });
 
-  it("should return error because token is invalid", async () => {
+  it("should not be able delete user because token is invalid", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
     const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
     const deleteUserController = new DeleteUserController(
@@ -152,7 +145,7 @@ describe("Delete User", () => {
     expect(statusCode).toBe(401);
   });
 
-  it("should return error because token invalid for this user", async () => {
+  it("should not be able delete user because token not belongs to this user", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
     const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
     const deleteUserController = new DeleteUserController(
@@ -160,7 +153,7 @@ describe("Delete User", () => {
       inMemoryGetUserByIdRepository
     );
 
-    await inMemoryUserRepository.createUser(user);
+    await inMemoryUserRepository.createUser(userExample);
 
     const { body, statusCode } = await deleteUserController.handle({
       params: {
@@ -175,7 +168,7 @@ describe("Delete User", () => {
     expect(statusCode).toBe(401);
   });
 
-  it("should return 500 if something goes wrong", async () => {
+  it("should not be able delete user because occured internal error", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
     const inMemoryGetUserByIdRepository = new InMemoryGetUserByIdRepository();
     const deleteUserController = new DeleteUserController(
@@ -193,7 +186,7 @@ describe("Delete User", () => {
       },
     });
 
-    expect(body).toBe("Internal Server Error");
+    expect(body).toEqual("Internal Server Error");
     expect(statusCode).toBe(500);
   });
 });

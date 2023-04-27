@@ -1,14 +1,6 @@
 import { GetUsersController } from "../../controllers/users/get-users/get-users";
-import { User } from "../../models/User";
 import { InMemoryUserRepository } from "../repositories/in-memory";
-
-const userExample = {
-  id: 1,
-  firstName: "John",
-  lastName: "Doe",
-  email: "johndoe@gmail.com",
-  password: "123456",
-} as User;
+import { userExample } from "../utils/global";
 
 describe("Get Users", () => {
   it("should return a empty list of users", async () => {
@@ -35,7 +27,7 @@ describe("Get Users", () => {
     expect(statusCode).toBe(200);
   });
 
-  it("should return 500 if something goes wrong", async () => {
+  it("should not be able get all users because occured internal error", async () => {
     const inMemoryUserRepository = new InMemoryUserRepository();
     const getUsersController = new GetUsersController(inMemoryUserRepository);
 
@@ -45,7 +37,7 @@ describe("Get Users", () => {
 
     const { body, statusCode } = await getUsersController.handle();
 
-    expect(body).toBe("Internal Server Error");
+    expect(body).toEqual("Internal Server Error");
     expect(statusCode).toBe(500);
   });
 });

@@ -1,7 +1,5 @@
-import { User } from "../../../models/User";
 import { HttpRequest, HttpResponse, IController } from "../../protocols";
 import { IDeletePetRepository } from "./protocols";
-import { IGetUserByIdRepository } from "../../../services/get-user-by-id/protocols";
 import {
   badRequest,
   notFound,
