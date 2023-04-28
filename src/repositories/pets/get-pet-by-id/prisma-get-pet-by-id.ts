@@ -10,6 +10,7 @@ export class PrismaGetPetByIdRepository implements IGetPetByIdRepository {
       },
       include: {
         owner: true,
+        adopter: true,
       },
     })) as Pet;
 
