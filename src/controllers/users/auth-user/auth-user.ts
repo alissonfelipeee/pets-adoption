@@ -1,6 +1,6 @@
 import { IAuthUserService } from "../../../services/auth-user/protocols";
 import { HttpRequest, HttpResponse } from "../../protocols";
-import { badRequest, serverError, unauthorized } from "../../utils";
+import { badRequest, ok, serverError, unauthorized } from "../../utils";
 import { AuthUserParams, AuthUserResponse } from "./protocols";
 
 export class AuthUserController {
@@ -32,10 +32,7 @@ export class AuthUserController {
         return unauthorized("Unauthorized - Invalid credentials");
       }
 
-      return {
-        statusCode: 200,
-        body: authUser,
-      };
+      return ok<AuthUserResponse>(authUser);
     } catch (error) {
       return serverError();
     }
