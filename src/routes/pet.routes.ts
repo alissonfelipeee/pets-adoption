@@ -10,7 +10,7 @@ import { CreatePetController } from "../controllers/pets/create-pets/create-pets
 import { PrismaGetUserByIdRepository } from "../repositories/users/get-user-by-id/prisma-get-user-by-id";
 import { GetPetByIdController } from "../controllers/pets/get-pet-by-id/get-pet-by-id";
 import { UpdatePetController } from "../controllers/pets/update-pet/update-pet";
-import { PrismaDeletePetRepository } from "../repositories/pets/delete-user/prisma-delete-user";
+import { PrismaDeletePetRepository } from "../repositories/pets/delete-pet/prisma-delete-pet";
 import { DeletePetController } from "../controllers/pets/delete-pet/delete-pet";
 import { UpdatePetAdopterController } from "../controllers/pets/update-pet-adopter/update-pet-adopter";
 import { PrismaUpdatePetAdopterRepository } from "../repositories/pets/update-pet-adopter/prisma-update-pet-adopter";

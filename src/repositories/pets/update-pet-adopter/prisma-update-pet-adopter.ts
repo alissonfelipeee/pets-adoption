@@ -21,6 +21,7 @@ export class PrismaUpdatePetAdopterRepository
       },
       include: {
         owner: true,
+        adopter: true,
       },
     });
 

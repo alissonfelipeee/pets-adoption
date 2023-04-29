@@ -65,6 +65,9 @@ export class UpdatePetAdopterController implements IController {
       );
 
       excludeFieldsUser(pet.owner, ["password", "createdAt", "updatedAt"]);
+      if (pet.adopter) {
+        excludeFieldsUser(pet.adopter, ["password", "createdAt", "updatedAt"]);
+      }
 
       return ok<Pet>(pet);
     } catch (error) {
