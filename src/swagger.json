@@ -1,0 +1,1048 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Pet's Adoption",
+    "description": "Este projeto tem como finalidade o desenvolvimento de uma API de adoção de pets.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Servidor local"
+    }
+  ],
+  "paths": {
+    "/users/": {
+      "get": {
+        "summary": "Listar todos os usuários",
+        "description": "Essa rota é responsável por listar todos os usuários.",
+        "tags": ["Usuários"],
+        "responses": {
+          "200": {
+            "description": "Usuários listados com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserWithoutPassword"
+                  }
+                },
+                "example": [
+                  {
+                    "id": 1,
+                    "firstName": "João",
+                    "lastName": "Silva",
+                    "email": "joaosilva@exemplo.com",
+                    "phone": "(11) 99999-9999"
+                  },
+                  {
+                    "id": 2,
+                    "firstName": "Maria",
+                    "lastName": "Silva",
+                    "email": "mariasilva@exemplo.com",
+                    "phone": "(13) 99999-9999"
+                  }
+                ]
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "example": "Internal Server Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/register": {
+      "post": {
+        "summary": "Criar um novo usuário",
+        "description": "Essa rota é responsável por criar um novo usuário.",
+        "tags": ["Usuários"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User",
+                "required": [
+                  "firstName",
+                  "lastName",
+                  "email",
+                  "password",
+                  "phone"
+                ]
+              },
+              "example": {
+                "firstName": "João",
+                "lastName": "Silva",
+                "email": "joaosilva@exemplo.com",
+                "password": "123456",
+                "phone": "(11) 99999-9999"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuário criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                },
+                "example": {
+                  "id": 1,
+                  "firstName": "João",
+                  "lastName": "Silva",
+                  "email": "joaosilva@exemplo.com",
+                  "phone": "(11) 99999-9999"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro ao criar usuário",
+            "content": {
+              "application/json": {
+                "example": "Bad Request - [Reason for error]"
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "example": "Internal Server Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/login": {
+      "post": {
+        "summary": "Autenticar usuário",
+        "description": "Essa rota é responsável por autenticar um usuário.",
+        "tags": ["Usuários"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "description": "E-mail do usuário"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Senha do usuário"
+                  }
+                },
+                "required": ["email", "password"]
+              },
+              "example": {
+                "email": "johndoe@gmail.com",
+                "password": "123456"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Usuários autenticado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                      "description": "E-mail do usuário",
+                      "example": "johndoe@gmail.com"
+                    },
+                    "token": {
+                      "type": "string",
+                      "description": "Token de autenticação",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Erro na requisição",
+          "content": {
+            "application/json": {
+              "example": "Bad Request - [Reason for error]"
+            }
+          }
+        },
+        "401": {
+          "description": "Usuário não autenticado",
+          "content": {
+            "application/json": {
+              "example": "Unauthorized - [Reason for error]"
+            }
+          }
+        },
+        "500": {
+          "description": "Erro interno do servidor",
+          "content": {
+            "application/json": {
+              "example": "Internal Server Error"
+            }
+          }
+        }
+      }
+    },
+    "/users/update/{id}": {
+      "patch": {
+        "summary": "Atualizar um usuário",
+        "description": "Essa rota é responsável por atualizar um usuário.",
+        "tags": ["Usuários"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do usuário",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "firstName": {
+                    "type": "string",
+                    "description": "Primeiro nome do usuário"
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "description": "Sobrenome do usuário"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Senha do usuário"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "description": "Telefone do usuário"
+                  }
+                }
+              },
+              "example": {
+                "phone": "(61) 99999-9999"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Usuário atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserWithoutPassword"
+                },
+                "example": {
+                  "id": 1,
+                  "firstName": "João",
+                  "lastName": "Santos",
+                  "email": "joaosilva@exemplo.com",
+                  "phone": "(61) 99999-9999"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro ao atualizar usuário",
+            "content": {
+              "application/json": {
+                "example": "Bad Request - [Reason for error]"
+              }
+            }
+          },
+          "401": {
+            "description": "Usuário não autorizado",
+            "content": {
+              "application/json": {
+                "example": "Unauthorized - [Reason for error] "
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "example": "Internal Server Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/delete/{id}": {
+      "delete": {
+        "summary": "Deletar um usuário",
+        "description": "Essa rota é responsável por deletar um usuário.",
+        "tags": ["Usuários"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do usuário",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuário deletado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserWithoutPassword"
+                },
+                "example": {
+                  "id": 1,
+                  "firstName": "João",
+                  "lastName": "Santos",
+                  "email": "joaosilva@exemplo.com",
+                  "phone": "(61) 99999-9999"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro ao deletar usuário",
+            "content": {
+              "application/json": {
+                "example": "Bad Request - [Reason for error]"
+              }
+            }
+          },
+          "401": {
+            "description": "Usuário não autorizado",
+            "content": {
+              "application/json": {
+                "example": "Unauthorized - [Reason for error] "
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário não encontrado",
+            "content": {
+              "application/json": {
+                "example": "Not Found - User not found"
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "example": "Internal Server Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pets/": {
+      "get": {
+        "summary": "Listar todos os pets",
+        "description": "Essa rota é responsável por listar todos os pets.",
+        "tags": ["Pets"],
+        "responses": {
+          "200": {
+            "description": "Pets listados com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Pet"
+                  }
+                },
+                "example": [
+                  {
+                    "id": 1,
+                    "name": "Bob",
+                    "age": 3,
+                    "breed": "Poodle",
+                    "owner": {
+                      "id": 1,
+                      "firstName": "João",
+                      "lastName": "Santos",
+                      "email": "joaosilva@exemplo.com",
+                      "phone": "(61) 99999-9999"
+                    },
+                    "available": true
+                  },
+                  {
+                    "id": 2,
+                    "name": "Cindy",
+                    "age": 2,
+                    "breed": "Shih Tzu",
+                    "owner": {
+                      "id": 2,
+                      "firstName": "Maria",
+                      "lastName": "Silva",
+                      "email": "mariasilva@exemplo.com",
+                      "phone": "(11) 99999-9999"
+                    },
+                    "adopter": {
+                      "id": 3,
+                      "firstName": "José",
+                      "lastName": "Santos",
+                      "email": "josesantos@exemplo.com",
+                      "phone": "(61) 99999-9999"
+                    },
+                    "available": false
+                  }
+                ]
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "example": "Internal Server Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pets/{id}": {
+      "get": {
+        "summary": "Listar um pet específico",
+        "description": "Essa rota é responsável por listar um pet específico a partir do seu ID.",
+        "tags": ["Pets"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do pet",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pet listado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "$ref": "#/components/schemas/Pet"
+                  }
+                },
+                "example": {
+                  "id": 1,
+                  "name": "Bob",
+                  "age": 3,
+                  "breed": "Poodle",
+                  "available": true,
+                  "owner": {
+                    "id": 1,
+                    "firstName": "João",
+                    "lastName": "Santos",
+                    "email": "joaosilva@exemplo.com",
+                    "phone": "(61) 99999-9999"
+                  },
+                  "adopter": null
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro ao listar pet",
+            "content": {
+              "application/json": {
+                "example": "Bad Request - [Reason for error]"
+              }
+            }
+          },
+          "404": {
+            "description": "Pet não encontrado",
+            "content": {
+              "application/json": {
+                "example": "Not found - Pet not found"
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "example": "Internal Server Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pets/create": {
+      "post": {
+        "summary": "Criar um novo pet",
+        "description": "Essa rota é responsável por criar um novo pet.",
+        "tags": ["Pets"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Pet",
+                "required": ["name", "age", "breed"]
+              },
+              "example": {
+                "name": "Bob",
+                "age": 2,
+                "breed": "Poodle"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pet criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pet"
+                },
+                "example": {
+                  "id": 1,
+                  "name": "Bob",
+                  "age": 2,
+                  "breed": "Poodle",
+                  "available": true,
+                  "owner": {
+                    "id": 1,
+                    "firstName": "João",
+                    "lastName": "Santos",
+                    "email": "joaosantos@exemplo.com",
+                    "phone": "(61) 99999-9999"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro ao criar um pet",
+            "content": {
+              "application/json": {
+                "example": "Bad Request - [Reason for error]"
+              }
+            }
+          },
+          "401": {
+            "description": "Erro de autenticação",
+            "content": {
+              "application/json": {
+                "example": "Unauthorized - Invalid token"
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "example": "Internal Server Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pets/update/{id}": {
+      "patch": {
+        "summary": "Atualizar um pet",
+        "description": "Essa rota é responsável por atualizar um pet.",
+        "tags": ["Pets"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do pet",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Nome do pet"
+                  },
+                  "age": {
+                    "type": "number",
+                    "description": "Idade do pet"
+                  },
+                  "breed": {
+                    "type": "string",
+                    "description": "Raça do pet"
+                  },
+                  "available": {
+                    "type": "boolean",
+                    "description": "Disponibilidade do pet para adoção"
+                  }
+                }
+              },
+              "example": {
+                "breed": "Pincher 0"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pet atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pet"
+                },
+                "example": {
+                  "id": 1,
+                  "name": "Bob",
+                  "age": 3,
+                  "breed": "Pincher 0",
+                  "available": true,
+                  "owner": {
+                    "id": 1,
+                    "firstName": "João",
+                    "lastName": "Santos",
+                    "email": "joaosantos@exemplo.com",
+                    "phone": "(61) 99999-9999"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro ao atualizar pet",
+            "content": {
+              "application/json": {
+                "example": "Bad Request - [Reason for error]"
+              }
+            }
+          },
+          "401": {
+            "description": "Usuário não autorizado a atualizar o pet",
+            "content": {
+              "application/json": {
+                "example": "Unauthorized - [Reason for error] "
+              }
+            }
+          },
+          "404": {
+            "description": "Pet não encontrado",
+            "content": {
+              "application/json": {
+                "example": "Not found - Pet not found"
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "example": "Internal Server Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pets/adopt/{id}": {
+      "patch": {
+        "summary": "Adotar um pet",
+        "description": "Essa rota é responsável por adotar um pet.",
+        "tags": ["Pets"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do pet",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pet adotado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pet"
+                },
+                "example": {
+                  "id": 1,
+                  "name": "Bob",
+                  "age": 3,
+                  "breed": "Pincher 0",
+                  "available": false,
+                  "owner": {
+                    "id": 1,
+                    "firstName": "João",
+                    "lastName": "Santos",
+                    "email": "joaosantos@exemplo.com",
+                    "phone": "(61) 99999-9999"
+                  },
+                  "adopter": {
+                    "id": 2,
+                    "firstName": "Maria",
+                    "lastName": "Silva",
+                    "email": "mariasilva@exemplo.com",
+                    "phone": "(11) 99999-9999"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro ao adotar pet",
+            "content": {
+              "application/json": {
+                "example": "Bad Request - [Reason for error]"
+              }
+            }
+          },
+          "401": {
+            "description": "Usuário não autorizado a adotar o pet",
+            "content": {
+              "application/json": {
+                "example": "Unauthorized - Invalid token"
+              }
+            }
+          },
+          "404": {
+            "description": "Pet não encontrado",
+            "content": {
+              "application/json": {
+                "example": "Not found - Pet not found"
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "example": "Internal Server Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pets/remove-adopter/{id}": {
+      "patch": {
+        "summary": "Remover adoção de um pet",
+        "description": "Essa rota é responsável por remover a adoção de um pet.",
+        "tags": ["Pets"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do pet",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Adoção removida com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pet"
+                },
+                "example": {
+                  "id": 1,
+                  "name": "Bob",
+                  "age": 3,
+                  "breed": "Pincher 0",
+                  "available": true,
+                  "owner": {
+                    "id": 1,
+                    "firstName": "João",
+                    "lastName": "Santos",
+                    "email": "joaosantos@exemplo.com",
+                    "phone": "(61) 99999-9999"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro ao remover adoção de pet",
+            "content": {
+              "application/json": {
+                "example": "Bad Request - [Reason for error]"
+              }
+            }
+          },
+          "401": {
+            "description": "Usuário não autorizado a remover adoção de pet",
+            "content": {
+              "application/json": {
+                "example": "Unauthorized - Invalid token"
+              }
+            }
+          },
+          "404": {
+            "description": "Pet não encontrado",
+            "content": {
+              "application/json": {
+                "example": "Not found - Pet not found"
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "example": "Internal Server Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pets/delete/{id}": {
+      "patch": {
+        "summary": "Deletar um pet",
+        "description": "Essa rota é responsável por deletar um pet.",
+        "tags": ["Pets"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do pet",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pet deletado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pet"
+                },
+                "example": {
+                  "id": 1,
+                  "name": "Bob",
+                  "age": 3,
+                  "breed": "Pincher 0",
+                  "available": true,
+                  "owner": {
+                    "id": 1,
+                    "firstName": "João",
+                    "lastName": "Santos",
+                    "email": "joaosantos@exemplo.com",
+                    "phone": "(61) 99999-9999"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro ao deletar o pet",
+            "content": {
+              "application/json": {
+                "example": "Bad Request - [Reason for error]"
+              }
+            }
+          },
+          "401": {
+            "description": "Usuário não autorizado a deletar o pet",
+            "content": {
+              "application/json": {
+                "example": "Unauthorized - [Reason for error]"
+              }
+            }
+          },
+          "404": {
+            "description": "Pet não encontrado",
+            "content": {
+              "application/json": {
+                "example": "Not found - Pet not found"
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "example": "Internal Server Error"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Bearer token to access these api endpoints",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "description": "Primeiro nome do usuário"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Sobrenome do usuário"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email do usuário"
+          },
+          "password": {
+            "type": "string",
+            "description": "Senha do usuário"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Telefone do usuário"
+          },
+          "pets": {
+            "$ref": "#/components/schemas/Pet"
+          },
+          "adoptions": {
+            "type": "Array",
+            "description": "Adoções do usuário"
+          }
+        }
+      },
+      "UserWithoutPassword": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "ID do usuário"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "Primeiro nome do usuário"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Sobrenome do usuário"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email do usuário"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Telefone do usuário"
+          }
+        }
+      },
+      "Pet": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Nome do pet"
+          },
+          "age": {
+            "type": "number",
+            "description": "Idade do pet"
+          },
+          "breed": {
+            "type": "string",
+            "description": "Raça do pet"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/User"
+          },
+          "available": {
+            "type": "boolean",
+            "description": "Disponibilidade do pet"
+          },
+          "adopter": {
+            "$ref": "#/components/schemas/User"
+          }
+        }
+      }
+    }
+  }
+}
